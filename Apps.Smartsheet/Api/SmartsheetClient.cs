@@ -1,3 +1,4 @@
+using Apps.Smartsheet.Authenticators;
 using Apps.Smartsheet.Constants;
 using Blackbird.Applications.Sdk.Common.Authentication;
 using Blackbird.Applications.Sdk.Common.Exceptions;
@@ -8,15 +9,13 @@ using RestSharp;
 
 namespace Apps.Smartsheet.Api;
 
-public class SmartsheetClient : BlackBirdRestClient
+public class SmartsheetClient(List<AuthenticationCredentialsProvider> creds) : BlackBirdRestClient(new() 
 {
-    public SmartsheetClient(IEnumerable<AuthenticationCredentialsProvider> creds) : base(new()
-    {
-        BaseUrl = new Uri(""),
-    })
-    {
-        this.AddDefaultHeader("Authorization", creds.Get(CredsNames.Token).Value);
-    }
+    BaseUrl = new Uri(creds.Get(CredsNames.BaseUrl).Value),
+    Authenticator = new ApiTokenAuthenticator(creds)
+})
+{
+    public SmartsheetClient(IEnumerable<AuthenticationCredentialsProvider> creds) : this(creds.ToList()) { }
 
     protected override Exception ConfigureErrorException(RestResponse response)
     {

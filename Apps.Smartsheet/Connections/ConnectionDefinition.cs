@@ -10,11 +10,23 @@ public class ConnectionDefinition : IConnectionDefinition
     {
         new()
         {
-            Name = "Developer API key",
+            Name = ConnectionTypes.ApiKey,
+            DisplayName = "API Key",
             AuthenticationType = ConnectionAuthenticationType.Undefined,
             ConnectionProperties = new List<ConnectionProperty>
             {
-                new(CredsNames.Token) { DisplayName = "API Token", Sensitive = true}
+                new(CredsNames.ApiKey) { DisplayName = "API Key", Sensitive = true },
+                new(CredsNames.BaseUrl)
+                {
+                    DisplayName = "Base URL", 
+                    DataItems = 
+                    [
+                        new(BaseUrls.Smartsheet, "Smartsheet"),
+                        new(BaseUrls.SmartsheetGov, "Smartsheet Gov"),
+                        new(BaseUrls.SmartsheetEurope, "Smartsheet Regions Europe"),
+                        new(BaseUrls.SmartsheetAustralia, "Smartsheet Regions Australia"),
+                    ]
+                } 
             }
         }
     };

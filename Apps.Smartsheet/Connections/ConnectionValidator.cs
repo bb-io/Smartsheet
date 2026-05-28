@@ -1,34 +1,31 @@
 ﻿using Apps.Smartsheet.Api;
+using Apps.Smartsheet.Api.Requests;
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Authentication;
 using Blackbird.Applications.Sdk.Common.Connections;
 using Blackbird.Applications.Sdk.Common.Invocation;
-using RestSharp;
 
 namespace Apps.Smartsheet.Connections;
 
 public class ConnectionValidator(InvocationContext invocationContext) : BaseInvocable(invocationContext), IConnectionValidator
 {
     public async ValueTask<ConnectionValidationResponse> ValidateConnection(
-        IEnumerable<AuthenticationCredentialsProvider> authenticationCredentialsProviders,
+        IEnumerable<AuthenticationCredentialsProvider> creds,
         CancellationToken cancellationToken)
     {
         try
         {
-            var client = new SmartsheetClient(authenticationCredentialsProviders);
-            var request = new RestRequest();
+            var client = new SmartsheetClient(creds);
+            var request = new SmartsheetRequest("users/me");
 
             var response = await client.ExecuteAsync(request, cancellationToken);
 
-            // Typically you'll want to use the least complex way to validate if a connection is valid.
             var isValid = response.StatusCode != System.Net.HttpStatusCode.Unauthorized;
-
             return new ConnectionValidationResponse
             {
                 IsValid = isValid,
                 Message = isValid ? "Success" : (response.Content ?? response.ErrorMessage ?? response.StatusCode.ToString()),
             };
-
         } 
         catch(Exception ex)
         {
@@ -40,6 +37,5 @@ public class ConnectionValidator(InvocationContext invocationContext) : BaseInvo
                 Message = ex.Message
             };
         }
-
     }
 }
