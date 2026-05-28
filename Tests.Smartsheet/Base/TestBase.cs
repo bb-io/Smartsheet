@@ -1,8 +1,11 @@
 ﻿using Blackbird.Applications.Sdk.Common.Authentication;
+using Blackbird.Applications.Sdk.Common.Dynamic;
 using Blackbird.Applications.Sdk.Common.Invocation;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace Tests.Smartsheet.Base;
+
 public class TestBase
 {
     public IEnumerable<AuthenticationCredentialsProvider> Creds { get; set; }
@@ -28,5 +31,19 @@ public class TestBase
         };
 
         FileManager = new FileManager();
+    }
+
+    protected static void PrintJsonResult(object result)
+    {
+        Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
+    }
+
+    protected static void PrintDataHandlerResult(IEnumerable<DataSourceItem> items)
+    {
+        var itemsList = items.ToList();
+
+        Console.WriteLine($"Count: {itemsList.Count}");
+        foreach (var item in itemsList)
+            Console.WriteLine($"{item.Value} - {item.DisplayName}");
     }
 }

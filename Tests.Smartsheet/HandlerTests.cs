@@ -8,18 +8,16 @@ namespace Tests.Smartsheet;
 public class HandlerTests : TestBase
 {
     [TestMethod]
-    public async Task Dynamic_handler_works()
+    public async Task UserDataHandler_ReturnsUsers()
     {
-        var handler = new DynamicHandler(InvocationContext);
+        // Arrange
+        var handler = new UserDataHandler(InvocationContext);
 
-        var result = await handler.GetDataAsync(new DataSourceContext { }, CancellationToken.None);
+        // Act
+        var result = await handler.GetDataAsync(new() { SearchString = "" }, CancellationToken.None);
 
-        Console.WriteLine($"Total: {result.Count()}");
-        foreach (var item in result)
-        {
-            Console.WriteLine($"{item.Value}: {item.DisplayName}");
-        }
-
-        Assert.IsTrue(result.Count() > 0);
+        // Assert
+        PrintDataHandlerResult(result);
+        Assert.IsNotNull(result);
     }
 }
