@@ -19,19 +19,19 @@ public class SmartsheetClient(List<AuthenticationCredentialsProvider> creds) : B
 {
     public SmartsheetClient(IEnumerable<AuthenticationCredentialsProvider> creds) : this(creds.ToList()) { }
 
-    public async IAsyncEnumerable<T> Paginate<T>(RestRequest request)
+    public async IAsyncEnumerable<T> PaginateOffset<T>(RestRequest request)
     {
         int currentPage = 1;
         int maxItemsPerPage = 100;
         int totalItemsYielded = 0;
-        PaginationResponse<T> response;
+        OffsetPaginationResponse<T> response;
 
         do
         {
             request.AddOrUpdateParameter("pageSize", maxItemsPerPage.ToString());
             request.AddOrUpdateParameter("currentPage", currentPage.ToString());
 
-            response = await ExecuteWithErrorHandling<PaginationResponse<T>>(request);
+            response = await ExecuteWithErrorHandling<OffsetPaginationResponse<T>>(request);
 
             foreach (var item in response.Data)
             {
@@ -42,6 +42,25 @@ public class SmartsheetClient(List<AuthenticationCredentialsProvider> creds) : B
             currentPage++;
 
         } while (totalItemsYielded < response.TotalCount);
+    }
+    
+    public async IAsyncEnumerable<T> PaginateToken<T>(RestRequest request)
+    {
+        request.AddOrUpdateParameter("paginationType", "token");
+        string? lastKey = string.Empty;
+
+        do
+        {
+            if (!string.IsNullOrEmpty(lastKey))
+                request.AddOrUpdateParameter("lastKey", lastKey);
+            
+            var response = await ExecuteWithErrorHandling<TokenPaginationResponse<T>>(request);
+            lastKey = response.LastKey;
+            
+            foreach (var item in response.Data)
+                yield return item;
+            
+        } while (!string.IsNullOrEmpty(lastKey));
     }
     
     protected override Exception ConfigureErrorException(RestResponse response)

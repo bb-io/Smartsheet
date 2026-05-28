@@ -12,7 +12,7 @@ public class UserDataHandler(InvocationContext context) : SmartsheetInvocable(co
     public async Task<IEnumerable<DataSourceItem>> GetDataAsync(DataSourceContext context, CancellationToken cancellationToken)
     {
         var request = new SmartsheetRequest("users");
-        var response = await Client.ExecuteWithErrorHandling<PaginationResponse<UserEntity>>(request);
+        var response = await Client.ExecuteWithErrorHandling<OffsetPaginationResponse<UserEntity>>(request);
 
         return response.Data
             .Where(x => x.Name.MatchesSearch(context.SearchString))

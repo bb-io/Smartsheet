@@ -15,7 +15,7 @@ public class UserActions(InvocationContext invocationContext) : SmartsheetInvoca
     public async Task<SearchUsersResponse> SearchUsers()
     {
         var request = new SmartsheetRequest("users");
-        var response = await Client.Paginate<UserEntity>(request)
+        var response = await Client.PaginateOffset<UserEntity>(request)
             .Select(entity => new UserResponse(entity))
             .ToArrayAsync();
 

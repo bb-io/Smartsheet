@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace Apps.Smartsheet.Models.Utility.Pagination;
 
-public class PaginationResponse<T>
+public class OffsetPaginationResponse<T>
 {
     [JsonProperty("pageNumber")]
     public int PageNumber { get; set; }
