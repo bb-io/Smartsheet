@@ -7,12 +7,13 @@ namespace Apps.Smartsheet;
 
 public class SmartsheetInvocable : BaseInvocable
 {
-    protected AuthenticationCredentialsProvider[] Creds =>
+    protected AuthenticationCredentialsProvider[] Creds => 
         InvocationContext.AuthenticationCredentialsProviders.ToArray();
 
-    protected SmartsheetClient SmartsheetClient { get; }
-    public SmartsheetInvocable(InvocationContext invocationContext) : base(invocationContext)
+    protected SmartsheetClient Client { get; }
+
+    protected SmartsheetInvocable(InvocationContext invocationContext) : base(invocationContext)
     {
-        SmartsheetClient = new(Creds);
+        Client = new(Creds);
     }
 }
