@@ -1,7 +1,7 @@
-﻿using Apps.Appname.Actions;
-using Tests.Appname.Base;
+﻿using Apps.Smartsheet.Actions;
+using Tests.Smartsheet.Base;
 
-namespace Tests.Appname;
+namespace Tests.Smartsheet;
 
 [TestClass]
 public class ActionTests : TestBase

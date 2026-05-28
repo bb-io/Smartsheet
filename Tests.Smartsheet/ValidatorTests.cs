@@ -1,8 +1,8 @@
-using Apps.Appname.Connections;
+using Apps.Smartsheet.Connections;
 using Blackbird.Applications.Sdk.Common.Authentication;
-using Tests.Appname.Base;
+using Tests.Smartsheet.Base;
 
-namespace Tests.Appname;
+namespace Tests.Smartsheet;
 
 [TestClass]
 public class ConnectionValidatorTests : TestBase

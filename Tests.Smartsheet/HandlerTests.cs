@@ -1,8 +1,8 @@
-﻿using Apps.Appname.Handlers;
+﻿using Apps.Smartsheet.Handlers;
 using Blackbird.Applications.Sdk.Common.Dynamic;
-using Tests.Appname.Base;
+using Tests.Smartsheet.Base;
 
-namespace Tests.Appname;
+namespace Tests.Smartsheet;
 
 [TestClass]
 public class HandlerTests : TestBase

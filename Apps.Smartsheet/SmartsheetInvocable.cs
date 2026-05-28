@@ -1,18 +1,18 @@
-using Apps.Appname.Api;
+using Apps.Smartsheet.Api;
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Authentication;
 using Blackbird.Applications.Sdk.Common.Invocation;
 
-namespace Apps.Appname;
+namespace Apps.Smartsheet;
 
-public class Invocable : BaseInvocable
+public class SmartsheetInvocable : BaseInvocable
 {
     protected AuthenticationCredentialsProvider[] Creds =>
         InvocationContext.AuthenticationCredentialsProviders.ToArray();
 
-    protected Client Client { get; }
-    public Invocable(InvocationContext invocationContext) : base(invocationContext)
+    protected SmartsheetClient SmartsheetClient { get; }
+    public SmartsheetInvocable(InvocationContext invocationContext) : base(invocationContext)
     {
-        Client = new(Creds);
+        SmartsheetClient = new(Creds);
     }
 }

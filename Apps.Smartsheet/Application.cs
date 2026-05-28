@@ -1,13 +1,13 @@
 ﻿using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Metadata;
 
-namespace Apps.Appname;
+namespace Apps.Smartsheet;
 
 public class Application : IApplication, ICategoryProvider
 {
     public IEnumerable<ApplicationCategory> Categories
     {
-        get => [];
+        get => [ApplicationCategory.TaskManagement, ApplicationCategory.DatabaseAndSpreadsheet];
         set { }
     }
 
