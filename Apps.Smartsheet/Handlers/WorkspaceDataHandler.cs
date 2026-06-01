@@ -9,13 +9,14 @@ namespace Apps.Smartsheet.Handlers;
 
 public class WorkspaceDataHandler(InvocationContext context) : SmartsheetInvocable(context), IAsyncDataSourceItemHandler
 {
+    // https://developers.smartsheet.com/api/smartsheet/openapi/workspaces/list-workspaces
     public async Task<IEnumerable<DataSourceItem>> GetDataAsync(DataSourceContext context, CancellationToken ct)
     {
         var request = new SmartsheetRequest("workspaces");
         var response = await Client.ExecuteWithErrorHandling<TokenPaginationResponse<WorkspaceEntity>>(request);
 
         return response.Data
-            .Where(x => x.Name.MatchesSearch(context.SearchString))
+            .WhereContains(x => x.Name, context.SearchString)
             .Select(x => new DataSourceItem(x.Id, x.Name))
             .ToList();
     }

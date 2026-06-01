@@ -9,13 +9,14 @@ namespace Apps.Smartsheet.Handlers;
 
 public class UserDataHandler(InvocationContext context) : SmartsheetInvocable(context), IAsyncDataSourceItemHandler
 {
+    // https://developers.smartsheet.com/api/smartsheet/openapi/users/list-users
     public async Task<IEnumerable<DataSourceItem>> GetDataAsync(DataSourceContext context, CancellationToken cancellationToken)
     {
         var request = new SmartsheetRequest("users");
         var response = await Client.ExecuteWithErrorHandling<OffsetPaginationResponse<UserEntity>>(request);
 
         return response.Data
-            .Where(x => x.Name.MatchesSearch(context.SearchString))
+            .WhereContains(x => x.Name, context.SearchString)
             .Select(x => new DataSourceItem(x.Id, x.ToString()))
             .ToList();
     }
