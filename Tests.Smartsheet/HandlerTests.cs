@@ -1,5 +1,4 @@
 ﻿using Apps.Smartsheet.Handlers;
-using Blackbird.Applications.Sdk.Common.Dynamic;
 using Tests.Smartsheet.Base;
 
 namespace Tests.Smartsheet;
@@ -26,6 +25,20 @@ public class HandlerTests : TestBase
     {
         // Arrange
         var handler = new WorkspaceDataHandler(InvocationContext);
+
+        // Act
+        var result = await handler.GetDataAsync(new() { SearchString = "" }, CancellationToken.None);
+
+        // Assert
+        PrintDataHandlerResult(result);
+        Assert.IsNotNull(result);
+    }
+    
+    [TestMethod]
+    public async Task SheetDataHandler_ReturnsUsers()
+    {
+        // Arrange
+        var handler = new SheetDataHandler(InvocationContext);
 
         // Act
         var result = await handler.GetDataAsync(new() { SearchString = "" }, CancellationToken.None);

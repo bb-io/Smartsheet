@@ -12,6 +12,7 @@
 
     <ItemGroup>
         <PackageReference Include="Blackbird.Applications.Sdk.Common" Version="2.14.0" />
+        <PackageReference Include="Blackbird.Applications.SDK.Extensions.FileManagement" Version="1.1.0" />
         <PackageReference Include="Blackbird.Applications.Sdk.Utils" Version="1.1.0-rc.8709" />
         <PackageReference Include="System.Linq.AsyncEnumerable" Version="10.0.8" />
     </ItemGroup>
