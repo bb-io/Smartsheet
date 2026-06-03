@@ -23,7 +23,7 @@ public class HandlerTests : TestBase
     }
     
     [TestMethod]
-    public async Task WorkspaceDataHandler_ReturnsUsers()
+    public async Task WorkspaceDataHandler_ReturnsWorkspaces()
     {
         // Arrange
         var handler = new WorkspaceDataHandler(InvocationContext);
@@ -37,16 +37,17 @@ public class HandlerTests : TestBase
     }
     
     [TestMethod]
-    public async Task SheetDataHandler_ReturnsUsers()
+    public async Task SheetPickerDataHandler_ReturnsSheets()
     {
         // Arrange
-        var handler = new SheetDataHandler(InvocationContext);
+        var workspaceRequest = new WorkspaceIdentifier { WorkspaceId = "3461696967731076" };
+        var handler = new SheetPickerDataHandler(InvocationContext, workspaceRequest);
 
         // Act
-        var result = await handler.GetDataAsync(new() { SearchString = "" }, CancellationToken.None);
+        var result = await handler.GetFolderContentAsync(new() { FolderId = "" }, CancellationToken.None);
 
         // Assert
-        PrintDataHandlerResult(result);
+        PrintFileFolderPickerResult(result);
         Assert.IsNotNull(result);
     }
 

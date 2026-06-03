@@ -7,9 +7,9 @@ using Blackbird.Applications.SDK.Extensions.FileManagement.Models.FileDataSource
 
 namespace Apps.Smartsheet.Handlers.FileFolder;
 
-public class FolderPickerDataHandler(
-    InvocationContext context,
-    [ActionParameter] WorkspaceIdentifier workspaceIdentifier)
+public class SheetPickerDataHandler(
+    InvocationContext context, 
+    [ActionParameter] WorkspaceIdentifier workspaceIdentifier) 
     : BasePicker(context, workspaceIdentifier.WorkspaceId), IAsyncFileDataSourceItemHandler
 {
     public async Task<IEnumerable<FolderPathItem>> GetFolderPathAsync(
@@ -23,6 +23,6 @@ public class FolderPickerDataHandler(
         FolderContentDataSourceContext context, 
         CancellationToken cancellationToken)
     {
-        return await base.GetFolderContentAsync(context.FolderId, cancellationToken, ResourceTypes.Folder);
+        return await base.GetFolderContentAsync(context.FolderId, cancellationToken, ResourceTypes.Sheet);
     }
 }

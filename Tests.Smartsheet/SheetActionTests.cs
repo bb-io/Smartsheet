@@ -33,9 +33,10 @@ public class SheetActionTests : TestBase
         // Arrange
         var actions = new SheetActions(InvocationContext);
         var sheetRequest = new SheetIdentifier { SheetId = "4709706974056324" };
+        var workspaceRequest = new OptionalWorkspaceIdentifier();
 
         // Act
-        var result = await actions.GetSheet(sheetRequest);
+        var result = await actions.GetSheet(sheetRequest, workspaceRequest);
 
         // Assert
         PrintJsonResult(result);
@@ -66,9 +67,10 @@ public class SheetActionTests : TestBase
         var actions = new SheetActions(InvocationContext);
         var sheetRequest = new SheetIdentifier { SheetId = "133455458291588" };
         var updateRequest = new UpdateSheetRequest { Name = "test123 updated" };
+        var workspaceRequest = new OptionalWorkspaceIdentifier();
 
         // Act
-        var result = await actions.UpdateSheet(sheetRequest, updateRequest);
+        var result = await actions.UpdateSheet(sheetRequest, workspaceRequest, updateRequest);
 
         // Assert
         PrintJsonResult(result);
@@ -99,13 +101,14 @@ public class SheetActionTests : TestBase
         // Arrange
         var actions = new SheetActions(InvocationContext);
         var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
+        var workspaceRequest = new OptionalWorkspaceIdentifier();
         var searchRequest = new SearchWithinSheetsRequest
         {
             TextToSearch = "value"
         };
 
         // Act
-        var result = await actions.SearchWithinSheet(sheetRequest, searchRequest);
+        var result = await actions.SearchWithinSheet(sheetRequest, workspaceRequest, searchRequest);
 
         // Assert
         PrintJsonResult(result);
