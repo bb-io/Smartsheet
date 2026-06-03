@@ -1,6 +1,7 @@
 ﻿using Blackbird.Applications.Sdk.Common.Authentication;
 using Blackbird.Applications.Sdk.Common.Dynamic;
 using Blackbird.Applications.Sdk.Common.Invocation;
+using Blackbird.Applications.SDK.Extensions.FileManagement.Models.FileDataSourceItems;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
@@ -45,5 +46,18 @@ public class TestBase
         Console.WriteLine($"Count: {itemsList.Count}");
         foreach (var item in itemsList)
             Console.WriteLine($"{item.Value} - {item.DisplayName}");
+    }
+    
+    protected static void PrintFileFolderPickerResult(IEnumerable<FileDataItem> items)
+    {
+        var itemsList = items.ToList();
+
+        Console.WriteLine($"Count: {itemsList.Count}");
+        foreach (var item in itemsList)
+        {
+            string selectable = item.IsSelectable ? "Selectable" : "Not selectable";
+            string type = item.Type == 0 ? "folder" : "file";
+            Console.WriteLine($"[{selectable} {type}] {item.Id} - {item.DisplayName} - {item.Date}");
+        }
     }
 }

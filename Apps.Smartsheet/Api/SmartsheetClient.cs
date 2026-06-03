@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Apps.Smartsheet.Authenticators;
 using Apps.Smartsheet.Constants;
 using Apps.Smartsheet.Models.Utility.Error;
@@ -44,13 +45,16 @@ public class SmartsheetClient(List<AuthenticationCredentialsProvider> creds) : B
         } while (totalItemsYielded < response.TotalCount);
     }
     
-    public async IAsyncEnumerable<T> PaginateToken<T>(RestRequest request)
+    public async IAsyncEnumerable<T> PaginateToken<T>(RestRequest request, int? timesToPaginate = null)
     {
         request.AddOrUpdateParameter("paginationType", "token");
         string? lastKey = string.Empty;
+        int timesPaginated = 0;
 
         do
         {
+            timesPaginated++;
+            
             if (!string.IsNullOrEmpty(lastKey))
                 request.AddOrUpdateParameter("lastKey", lastKey);
             
@@ -60,7 +64,7 @@ public class SmartsheetClient(List<AuthenticationCredentialsProvider> creds) : B
             foreach (var item in response.Data)
                 yield return item;
             
-        } while (!string.IsNullOrEmpty(lastKey));
+        } while (!string.IsNullOrEmpty(lastKey) && (!timesToPaginate.HasValue || timesPaginated < timesToPaginate.Value));
     }
     
     protected override Exception ConfigureErrorException(RestResponse response)

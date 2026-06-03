@@ -1,4 +1,6 @@
 ﻿using Apps.Smartsheet.Handlers;
+using Apps.Smartsheet.Handlers.FileFolder;
+using Apps.Smartsheet.Models.Identifiers;
 using Tests.Smartsheet.Base;
 
 namespace Tests.Smartsheet;
@@ -45,6 +47,21 @@ public class HandlerTests : TestBase
 
         // Assert
         PrintDataHandlerResult(result);
+        Assert.IsNotNull(result);
+    }
+
+    [TestMethod]
+    public async Task FolderPickerDataHandler_ReturnsFolders()
+    {
+        // Arrange
+        var workspaceRequest = new WorkspaceIdentifier { WorkspaceId = "3461696967731076" };
+        var handler = new FolderPickerDataHandler(InvocationContext, workspaceRequest);
+
+        // Act
+        var result = await handler.GetFolderContentAsync(new() { FolderId = "8172027522639748" }, CancellationToken.None);
+
+        // Assert
+        PrintFileFolderPickerResult(result);
         Assert.IsNotNull(result);
     }
 }
