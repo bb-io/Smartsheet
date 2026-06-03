@@ -54,7 +54,7 @@ public class SheetActions(InvocationContext context) : SmartsheetInvocable(conte
     }
 
     // https://developers.smartsheet.com/api/smartsheet/openapi/search/list-search-sheet
-    [Display("Search within sheet", Description = "Searches a specific sheet for the specified text")]
+    [Action("Search within sheet", Description = "Searches a specific sheet for the specified text")]
     public async Task<SearchWithinSheetsResponse> SearchWithinSheet(
         [ActionParameter] SheetIdentifier sheetIdentifier,
         [ActionParameter] SearchWithinSheetsRequest searchInput)
