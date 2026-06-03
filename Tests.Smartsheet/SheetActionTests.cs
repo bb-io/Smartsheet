@@ -15,8 +15,7 @@ public class SheetActionTests : TestBase
         var actions = new SheetActions(InvocationContext);
         var searchInput = new SearchSheetsRequest
         {
-            CreatedAfter = new DateTime(2026, 05, 28, 15, 37, 00, DateTimeKind.Utc),
-            ModifiedBefore = new DateTime(2026, 05, 28, 15, 39, 00, DateTimeKind.Utc),
+            
         };
 
         // Act
@@ -48,10 +47,63 @@ public class SheetActionTests : TestBase
         // Arrange
         var actions = new SheetActions(InvocationContext);
         var workspaceRequest = new WorkspaceIdentifier { WorkspaceId = "3461696967731076" };
-        var createRequest = new CreateSheetInWorkspaceRequest { Name = "test from tests" };
+        var createRequest = new CreateSheetInWorkspaceRequest { Name = "test from tests4" };
 
         // Act
         var result = await actions.CreateSheetInWorkspace(workspaceRequest, createRequest);
+
+        // Assert
+        PrintJsonResult(result);
+        Assert.IsNotNull(result);
+    }
+
+    [TestMethod]
+    public async Task UpdateSheet_ReturnsUpdatedSheet()
+    {
+        // Arrange
+        var actions = new SheetActions(InvocationContext);
+        var sheetRequest = new SheetIdentifier { SheetId = "133455458291588" };
+        var updateRequest = new UpdateSheetRequest { Name = "test123 updated" };
+
+        // Act
+        var result = await actions.UpdateSheet(sheetRequest, updateRequest);
+
+        // Assert
+        PrintJsonResult(result);
+        Assert.IsNotNull(result);
+    }
+
+    [TestMethod]
+    public async Task SearchWithinAllSheets_ReturnsSearchResults()
+    {
+        // Arrange
+        var actions = new SheetActions(InvocationContext);
+        var searchRequest = new SearchWithinSheetsRequest
+        {
+            TextToSearch = "value"
+        };
+
+        // Act
+        var result = await actions.SearchWithinAllSheets(searchRequest);
+
+        // Assert
+        PrintJsonResult(result);
+        Assert.IsNotNull(result);
+    }
+    
+    [TestMethod]
+    public async Task SearchWithinSheet_ReturnsSearchResults()
+    {
+        // Arrange
+        var actions = new SheetActions(InvocationContext);
+        var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
+        var searchRequest = new SearchWithinSheetsRequest
+        {
+            TextToSearch = "value"
+        };
+
+        // Act
+        var result = await actions.SearchWithinSheet(sheetRequest, searchRequest);
 
         // Assert
         PrintJsonResult(result);

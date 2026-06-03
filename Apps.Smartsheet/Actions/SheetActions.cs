@@ -5,8 +5,10 @@ using Apps.Smartsheet.Models.Entities.Sheet;
 using Apps.Smartsheet.Models.Identifiers;
 using Apps.Smartsheet.Models.Request.Sheet;
 using Apps.Smartsheet.Models.Response.Sheet;
+using Apps.Smartsheet.Models.Utility.Wrapper;
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Actions;
+using Blackbird.Applications.Sdk.Common.Exceptions;
 using Blackbird.Applications.Sdk.Common.Invocation;
 using Blackbird.Applications.Sdk.Utils.Extensions.Http;
 using RestSharp;
@@ -33,6 +35,43 @@ public class SheetActions(InvocationContext context) : SmartsheetInvocable(conte
         return new(response);
     }
 
+    // https://developers.smartsheet.com/api/smartsheet/openapi/search/list-search
+    [Action("Search within all sheets", Description = "Searches all sheets for the specified text")]
+    public async Task<SearchWithinSheetsResponse> SearchWithinAllSheets( 
+        [ActionParameter] SearchWithinSheetsRequest searchInput)
+    {
+        var request = new SmartsheetRequest("search");
+        request.AddQueryParameter("query", searchInput.TextToSearch.Trim()); 
+        request.AddQueryParameter("scopes", "cellData");
+        
+        var response = await Client.ExecuteWithErrorHandling<ResultsWrapper<SheetSearchEntity>>(request);
+        var results = response.Results
+            .Where(x => x.IsSheetRow)
+            .Select(x => new SheetSearchResponse(x))
+            .ToArray();
+
+        return new(results);
+    }
+
+    // https://developers.smartsheet.com/api/smartsheet/openapi/search/list-search-sheet
+    [Display("Search within sheet", Description = "Searches a specific sheet for the specified text")]
+    public async Task<SearchWithinSheetsResponse> SearchWithinSheet(
+        [ActionParameter] SheetIdentifier sheetIdentifier,
+        [ActionParameter] SearchWithinSheetsRequest searchInput)
+    {
+        var request = new SmartsheetRequest($"search/sheets/{sheetIdentifier.SheetId}");
+        request.AddQueryParameter("query", searchInput.TextToSearch.Trim()); 
+        request.AddQueryParameter("scopes", "cellData");
+        
+        var response = await Client.ExecuteWithErrorHandling<ResultsWrapper<SheetSearchEntity>>(request);
+        var results = response.Results
+            .Where(x => x.IsSheetRow)
+            .Select(x => new SheetSearchResponse(x))
+            .ToArray();
+
+        return new(results);
+    }
+    
     // https://developers.smartsheet.com/api/smartsheet/openapi/sheets/getsheet
     [Action("Get sheet", Description = "Get a specific sheet")]
     public async Task<SheetResponse> GetSheet([ActionParameter] SheetIdentifier sheetIdentifier)
@@ -45,7 +84,7 @@ public class SheetActions(InvocationContext context) : SmartsheetInvocable(conte
 
     // https://developers.smartsheet.com/api/smartsheet/openapi/sheets/create-sheet-in-workspace
     [Action("Create sheet in workspace", Description = "Create a sheet from scratch in the specified workspace")]
-    public async Task<SheetResponse> CreateSheetInWorkspace(
+    public async Task<CreatedSheetResponse> CreateSheetInWorkspace(
         [ActionParameter] WorkspaceIdentifier workspaceIdentifier,
         [ActionParameter] CreateSheetInWorkspaceRequest createInput)
     {
@@ -63,8 +102,28 @@ public class SheetActions(InvocationContext context) : SmartsheetInvocable(conte
                     }
                 }
             });
-        var response = await Client.ExecuteWithErrorHandling<SheetEntity>(request);
+        var response = await Client.ExecuteWithErrorHandling<ResultWrapper<SheetEntity>>(request);
 
-        return new(response);
+        return new(response.Result);
+    }
+
+    // https://developers.smartsheet.com/api/smartsheet/openapi/sheets/updatesheet
+    [Action("Update sheet", Description = "Update a specific sheet")]
+    public async Task<CreatedSheetResponse> UpdateSheet(
+        [ActionParameter] SheetIdentifier sheetIdentifier,
+        [ActionParameter] UpdateSheetRequest updateInput)
+    {
+        var body = new Dictionary<string, string?>();
+        
+        if (!string.IsNullOrEmpty(updateInput.Name))
+            body.Add("name", updateInput.Name);
+
+        if (body.Count == 0)
+            throw new PluginMisconfigurationException("Please specify at least one property to update");
+
+        var request = new SmartsheetRequest($"sheets/{sheetIdentifier.SheetId}", Method.Put).AddJsonBody(body);
+        var response = await Client.ExecuteWithErrorHandling<ResultWrapper<SheetEntity>>(request);
+        
+        return new(response.Result);
     }
 }
