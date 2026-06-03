@@ -3,6 +3,7 @@ using Apps.Smartsheet.Extensions;
 using Apps.Smartsheet.Helper.Validation;
 using Apps.Smartsheet.Models.Entities.Sheet;
 using Apps.Smartsheet.Models.Identifiers;
+using Apps.Smartsheet.Models.Identifiers.Optional;
 using Apps.Smartsheet.Models.Request.Sheet;
 using Apps.Smartsheet.Models.Response.Sheet;
 using Apps.Smartsheet.Models.Utility.Wrapper;
@@ -83,12 +84,18 @@ public class SheetActions(InvocationContext context) : SmartsheetInvocable(conte
     }
 
     // https://developers.smartsheet.com/api/smartsheet/openapi/sheets/create-sheet-in-workspace
-    [Action("Create sheet in workspace", Description = "Create a sheet from scratch in the specified workspace")]
-    public async Task<CreatedSheetResponse> CreateSheetInWorkspace(
+    // https://developers.smartsheet.com/api/smartsheet/openapi/sheets/create-sheet-in-folder
+    [Action("Create sheet", Description = "Create a sheet from scratch")]
+    public async Task<CreatedSheetResponse> CreateSheet(
         [ActionParameter] WorkspaceIdentifier workspaceIdentifier,
-        [ActionParameter] CreateSheetInWorkspaceRequest createInput)
+        [ActionParameter] CreateSheetRequest createInput,
+        [ActionParameter] OptionalFolderIdentifier folderIdentifier)
     {
-        var request = new SmartsheetRequest($"workspaces/{workspaceIdentifier.WorkspaceId}/sheets", Method.Post)
+        string endpoint = !string.IsNullOrEmpty(folderIdentifier.FolderId)
+            ? $"folders/{folderIdentifier.FolderId}/sheets"
+            : $"workspaces/{workspaceIdentifier.WorkspaceId}/sheets";
+        
+        var request = new SmartsheetRequest(endpoint, Method.Post)
             .WithJsonBody(new
             {
                 name = createInput.Name,

@@ -1,5 +1,6 @@
 using Apps.Smartsheet.Actions;
 using Apps.Smartsheet.Models.Identifiers;
+using Apps.Smartsheet.Models.Identifiers.Optional;
 using Apps.Smartsheet.Models.Request.Sheet;
 using Tests.Smartsheet.Base;
 
@@ -47,10 +48,11 @@ public class SheetActionTests : TestBase
         // Arrange
         var actions = new SheetActions(InvocationContext);
         var workspaceRequest = new WorkspaceIdentifier { WorkspaceId = "3461696967731076" };
-        var createRequest = new CreateSheetInWorkspaceRequest { Name = "test from tests4" };
+        var createRequest = new CreateSheetRequest { Name = "test from tests4" };
+        var folderRequest = new OptionalFolderIdentifier { FolderId = "3836504997947268" };
 
         // Act
-        var result = await actions.CreateSheetInWorkspace(workspaceRequest, createRequest);
+        var result = await actions.CreateSheet(workspaceRequest, createRequest, folderRequest);
 
         // Assert
         PrintJsonResult(result);
