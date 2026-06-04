@@ -1,6 +1,8 @@
 using Apps.Smartsheet.Actions;
 using Apps.Smartsheet.Models.Identifiers;
 using Apps.Smartsheet.Models.Identifiers.Optional;
+using Apps.Smartsheet.Models.Request.Folder;
+using Blackbird.Applications.Sdk.Common.Exceptions;
 using Tests.Smartsheet.Base;
 
 namespace Tests.Smartsheet;
@@ -22,5 +24,73 @@ public class FolderActionTests : TestBase
         // Assert
         PrintJsonResult(result);
         Assert.IsNotNull(result);
+    }
+
+    [TestMethod]
+    public async Task GetFolderPath_ReturnsPathString()
+    {
+        // Arrange
+        var actions = new FolderActions(InvocationContext);
+        var folderRequest = new FolderIdentifier { FolderId = "3836504997947268" };
+        var workspaceRequest = new OptionalWorkspaceIdentifier();
+        
+        // Act
+        var result = await actions.GetFolderPath(folderRequest, workspaceRequest);
+
+        // Assert
+        Console.WriteLine(result.Path);
+        Assert.IsNotNull(result);
+    }
+
+    [TestMethod]
+    public async Task CreateFolder_ReturnsCreatedFolder()
+    {
+        // Arrange
+        var actions = new FolderActions(InvocationContext);
+        var folderRequest = new OptionalFolderIdentifier { FolderId = "244421984839556" };
+        var workspaceRequest = new WorkspaceIdentifier { WorkspaceId = "3461696967731076" };
+        var createRequest = new CreateFolderRequest { FolderName = "222test new" };
+
+        // Act
+        var result = await actions.CreateFolder(workspaceRequest, folderRequest, createRequest);
+
+        // Assert
+        PrintJsonResult(result);
+        Assert.IsNotNull(result);
+    }
+
+    [TestMethod]
+    public async Task UpdateFolder_ReturnsUpdatedFolder()
+    {
+        // Arrange
+        var actions = new FolderActions(InvocationContext);
+        var folderRequest = new FolderIdentifier { FolderId = "244421984839556" };
+        var workspaceRequest = new OptionalWorkspaceIdentifier { WorkspaceId = "3461696967731076" };
+        var updateRequest = new UpdateFolderRequest { FolderName = "123test new" };
+
+        // Act
+        var result = await actions.UpdateFolder(folderRequest, workspaceRequest, updateRequest);
+
+        // Assert
+        PrintJsonResult(result);
+        Assert.IsNotNull(result);
+    }
+
+    [TestMethod]
+    public async Task DeleteFolder_IsSuccess()
+    {
+        // Arrange
+        var actions = new FolderActions(InvocationContext);
+        var folderRequest = new FolderIdentifier { FolderId = "3836504997947268" };
+        var workspaceRequest = new OptionalWorkspaceIdentifier();
+
+        // Act
+        await actions.DeleteFolder(folderRequest, workspaceRequest);
+
+        // Assert
+        var ex = await Assert.ThrowsExactlyAsync<PluginApplicationException>(async () => 
+            await actions.GetFolder(folderRequest, workspaceRequest));
+        
+        Assert.Contains("Not Found", ex.Message);
     }
 }

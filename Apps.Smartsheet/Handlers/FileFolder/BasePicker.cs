@@ -1,5 +1,6 @@
 using Apps.Smartsheet.Api.Requests;
 using Apps.Smartsheet.Constants;
+using Apps.Smartsheet.Extensions;
 using Apps.Smartsheet.Models.Entities.Children;
 using Apps.Smartsheet.Models.Entities.Folder;
 using Blackbird.Applications.Sdk.Common.Exceptions;
@@ -29,14 +30,8 @@ public class BasePicker : SmartsheetInvocable
         var request = new SmartsheetRequest($"folders/{fileDataItemId}/path");
         var response = await Client.ExecuteWithErrorHandling<FolderPathEntity>(request);
 
-        var breadcrumbs = new List<FolderPathItem>();
-        var currentNode = response;
-
-        while (currentNode != null)
-        {
-            breadcrumbs.Add(new FolderPathItem { Id = currentNode.Id, DisplayName = currentNode.Name });
-            currentNode = currentNode.Folders?.FirstOrDefault();
-        }
+        var pathEntities = response.GetPathEntities();
+        var breadcrumbs = pathEntities.Select(x => new FolderPathItem { Id = x.Id, DisplayName = x.Name }).ToList();
         
         if (breadcrumbs.Count > 1)
             breadcrumbs.RemoveAt(breadcrumbs.Count - 1);
