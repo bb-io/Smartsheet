@@ -1,23 +1,28 @@
 using Apps.Smartsheet.Api.Requests;
+using Apps.Smartsheet.Constants;
 using Apps.Smartsheet.Extensions;
 using Apps.Smartsheet.Helper.Validation;
 using Apps.Smartsheet.Models.Entities.Sheet;
 using Apps.Smartsheet.Models.Identifiers;
 using Apps.Smartsheet.Models.Identifiers.Optional;
 using Apps.Smartsheet.Models.Request.Sheet;
+using Apps.Smartsheet.Models.Response.File;
 using Apps.Smartsheet.Models.Response.Sheet;
 using Apps.Smartsheet.Models.Utility.Wrapper;
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Actions;
 using Blackbird.Applications.Sdk.Common.Exceptions;
 using Blackbird.Applications.Sdk.Common.Invocation;
+using Blackbird.Applications.SDK.Extensions.FileManagement.Interfaces;
+using Blackbird.Applications.Sdk.Utils.Extensions.Files;
 using Blackbird.Applications.Sdk.Utils.Extensions.Http;
 using RestSharp;
 
 namespace Apps.Smartsheet.Actions;
 
 [ActionList("Sheets")]
-public class SheetActions(InvocationContext context) : SmartsheetInvocable(context)
+public class SheetActions(InvocationContext context, IFileManagementClient fileManagementClient) 
+    : SmartsheetInvocable(context)
 {
     // https://developers.smartsheet.com/api/smartsheet/openapi/sheets/list-sheets
     [Action("Search sheets", Description = "Search sheets that the user has access to")]
@@ -136,6 +141,64 @@ public class SheetActions(InvocationContext context) : SmartsheetInvocable(conte
         var request = new SmartsheetRequest($"sheets/{sheetIdentifier.SheetId}", Method.Put).AddJsonBody(body);
         var response = await Client.ExecuteWithErrorHandling<ResultWrapper<SheetEntity>>(request);
         
+        return new(response.Result);
+    }
+
+    // https://developers.smartsheet.com/api/smartsheet/openapi/sheets/getsheet
+    [Action("Download sheet", Description = "Download a specific sheet")]
+    public async Task<FileResponse> DownloadSheet(
+        [ActionParameter] SheetIdentifier sheetIdentifier,
+        [ActionParameter] OptionalWorkspaceIdentifier workspaceIdentifier,  // For the FF picker to work
+        [ActionParameter] FileFormatIdentifier formatIdentifier,
+        [ActionParameter] DownloadSheetRequest downloadInput)
+    {
+        string fileFormat = formatIdentifier.FileFormat ?? SheetFileFormats.Xlsx;
+
+        var request = new SmartsheetRequest($"sheets/{sheetIdentifier.SheetId}")
+            .AddHeader("Accept", fileFormat);
+        var response = await Client.ExecuteWithErrorHandling(request);
+
+        if (response.RawBytes is null)
+            throw new PluginApplicationException("Failed to download a sheet");
+        
+        string rawName = string.IsNullOrEmpty(downloadInput.FileName) ? "Sheet" : downloadInput.FileName;
+        string cleanName = Path.GetFileNameWithoutExtension(rawName);
+        string fullFileName = $"{cleanName}{formatIdentifier.GetFileExtension()}";
+        
+        using var stream = new MemoryStream(response.RawBytes);
+        var file = await fileManagementClient.UploadAsync(stream, fileFormat, fullFileName);
+        return new(file);
+    }
+
+    // https://developers.smartsheet.com/api/smartsheet/openapi/imports/import-sheet-into-folder
+    // https://developers.smartsheet.com/api/smartsheet/openapi/imports/import-sheet-into-workspace
+    [Action("Upload sheet", Description = "Upload a new sheet")]
+    public async Task<CreatedSheetResponse> UploadSheet(
+        [ActionParameter] WorkspaceIdentifier workspaceIdentifier,
+        [ActionParameter] OptionalFolderIdentifier folderIdentifier,
+        [ActionParameter] UploadSheetRequest uploadInput)
+    {
+        var inputFile = await fileManagementClient.DownloadAsync(uploadInput.File);
+        var fileBytes = await inputFile.GetByteData();
+
+        string sheetName = string.IsNullOrEmpty(uploadInput.OverwrittenSheetName)
+            ? Path.GetFileNameWithoutExtension(uploadInput.File.Name)
+            : uploadInput.OverwrittenSheetName;
+        
+        string endpoint = string.IsNullOrEmpty(folderIdentifier.FolderId)
+            ? $"workspaces/{workspaceIdentifier.WorkspaceId}/sheets/import"
+            : $"folders/{folderIdentifier.FolderId}/sheets/import";
+        
+        string dispositionHeaderValue = $"attachment; filename=\"{uploadInput.File.Name}\"";
+        string contentType = uploadInput.File.GetSheetContentType();
+        
+        var request = new SmartsheetRequest(endpoint, Method.Post)
+            .AddQueryParameter("sheetName", sheetName)
+            .AddHeader("Content-Type", contentType)
+            .AddHeader("Content-Disposition", dispositionHeaderValue)
+            .AddParameter(contentType, fileBytes, ParameterType.RequestBody);
+
+        var response = await Client.ExecuteWithErrorHandling<ResultWrapper<SheetEntity>>(request);
         return new(response.Result);
     }
 }

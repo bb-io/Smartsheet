@@ -1,7 +1,9 @@
 using Apps.Smartsheet.Actions;
+using Apps.Smartsheet.Constants;
 using Apps.Smartsheet.Models.Identifiers;
 using Apps.Smartsheet.Models.Identifiers.Optional;
 using Apps.Smartsheet.Models.Request.Sheet;
+using Blackbird.Applications.Sdk.Common.Files;
 using Tests.Smartsheet.Base;
 
 namespace Tests.Smartsheet;
@@ -13,7 +15,7 @@ public class SheetActionTests : TestBase
     public async Task SearchSheets_ReturnsSheets()
     {
         // Arrange
-        var actions = new SheetActions(InvocationContext);
+        var actions = new SheetActions(InvocationContext, FileManager);
         var searchInput = new SearchSheetsRequest
         {
             
@@ -31,7 +33,7 @@ public class SheetActionTests : TestBase
     public async Task GetSheet_ReturnsSheet()
     {
         // Arrange
-        var actions = new SheetActions(InvocationContext);
+        var actions = new SheetActions(InvocationContext, FileManager);
         var sheetRequest = new SheetIdentifier { SheetId = "4709706974056324" };
         var workspaceRequest = new OptionalWorkspaceIdentifier();
 
@@ -47,7 +49,7 @@ public class SheetActionTests : TestBase
     public async Task CreateSheetInWorkspace_ReturnsCreatedSheet()
     {
         // Arrange
-        var actions = new SheetActions(InvocationContext);
+        var actions = new SheetActions(InvocationContext, FileManager);
         var workspaceRequest = new WorkspaceIdentifier { WorkspaceId = "3461696967731076" };
         var createRequest = new CreateSheetRequest { Name = "test from tests4" };
         var folderRequest = new OptionalFolderIdentifier { FolderId = "3836504997947268" };
@@ -64,7 +66,7 @@ public class SheetActionTests : TestBase
     public async Task UpdateSheet_ReturnsUpdatedSheet()
     {
         // Arrange
-        var actions = new SheetActions(InvocationContext);
+        var actions = new SheetActions(InvocationContext, FileManager);
         var sheetRequest = new SheetIdentifier { SheetId = "133455458291588" };
         var updateRequest = new UpdateSheetRequest { Name = "test123 updated" };
         var workspaceRequest = new OptionalWorkspaceIdentifier();
@@ -81,7 +83,7 @@ public class SheetActionTests : TestBase
     public async Task SearchWithinAllSheets_ReturnsSearchResults()
     {
         // Arrange
-        var actions = new SheetActions(InvocationContext);
+        var actions = new SheetActions(InvocationContext, FileManager);
         var searchRequest = new SearchWithinSheetsRequest
         {
             TextToSearch = "value"
@@ -99,7 +101,7 @@ public class SheetActionTests : TestBase
     public async Task SearchWithinSheet_ReturnsSearchResults()
     {
         // Arrange
-        var actions = new SheetActions(InvocationContext);
+        var actions = new SheetActions(InvocationContext, FileManager);
         var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
         var workspaceRequest = new OptionalWorkspaceIdentifier();
         var searchRequest = new SearchWithinSheetsRequest
@@ -109,6 +111,45 @@ public class SheetActionTests : TestBase
 
         // Act
         var result = await actions.SearchWithinSheet(sheetRequest, workspaceRequest, searchRequest);
+
+        // Assert
+        PrintJsonResult(result);
+        Assert.IsNotNull(result);
+    }
+
+    [TestMethod]
+    public async Task DownloadSheet_IsSuccess()
+    {
+        // Arrange
+        var actions = new SheetActions(InvocationContext, FileManager);
+        var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
+        var workspaceRequest = new OptionalWorkspaceIdentifier();
+        var fileFormatRequest = new FileFormatIdentifier { FileFormat = SheetFileFormats.Csv };
+        var downloadRequest = new DownloadSheetRequest { FileName = "test" };
+
+        // Act
+        var result = await actions.DownloadSheet(sheetRequest, workspaceRequest, fileFormatRequest, downloadRequest);
+
+        // Assert
+        Console.WriteLine(result.File.Name);
+        Assert.IsNotNull(result.File);
+    }
+
+    [TestMethod]
+    public async Task UploadSheet_ReturnsUploadedSheet()
+    {
+        // Arrange
+        var actions = new SheetActions(InvocationContext, FileManager);
+        var workspaceRequest = new WorkspaceIdentifier { WorkspaceId = "3461696967731076" };
+        var folderRequest = new OptionalFolderIdentifier { FolderId = "8172027522639748" };
+        var uploadRequest = new UploadSheetRequest
+        {
+            File = new FileReference { Name = "Sheet.csv" },
+            OverwrittenSheetName = "test"
+        };
+
+        // Act
+        var result = await actions.UploadSheet(workspaceRequest, folderRequest, uploadRequest);
 
         // Assert
         PrintJsonResult(result);
