@@ -86,10 +86,8 @@ public class SheetActions(InvocationContext context, IFileManagementClient fileM
         [ActionParameter] OptionalWorkspaceIdentifier workspaceIdentifier  // For the FF picker to work)
     )
     {
-        var request = new SmartsheetRequest($"sheets/{sheetIdentifier.SheetId}");
-        var response = await Client.ExecuteWithErrorHandling<SheetEntity>(request);
-
-        return new(response);
+        var folder = await FetchSheet(sheetIdentifier.SheetId);
+        return new(folder);
     }
 
     // https://developers.smartsheet.com/api/smartsheet/openapi/sheets/create-sheet-in-workspace
@@ -161,7 +159,15 @@ public class SheetActions(InvocationContext context, IFileManagementClient fileM
         if (response.RawBytes is null)
             throw new PluginApplicationException("Failed to download a sheet");
         
-        string rawName = string.IsNullOrEmpty(downloadInput.FileName) ? "Sheet" : downloadInput.FileName;
+        string rawName;
+        if (string.IsNullOrEmpty(downloadInput.FileName))
+        {
+            var sheetMeta = await FetchSheet(sheetIdentifier.SheetId);
+            rawName = sheetMeta.Name;
+        }
+        else 
+            rawName = downloadInput.FileName;
+        
         string cleanName = Path.GetFileNameWithoutExtension(rawName);
         string fullFileName = $"{cleanName}{formatIdentifier.GetFileExtension()}";
         
@@ -200,5 +206,11 @@ public class SheetActions(InvocationContext context, IFileManagementClient fileM
 
         var response = await Client.ExecuteWithErrorHandling<ResultWrapper<SheetEntity>>(request);
         return new(response.Result);
+    }
+
+    private async Task<SheetEntity> FetchSheet(string sheetId)
+    {
+        var request = new SmartsheetRequest($"sheets/{sheetId}");
+        return await Client.ExecuteWithErrorHandling<SheetEntity>(request);
     }
 }

@@ -125,7 +125,7 @@ public class SheetActionTests : TestBase
         var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
         var workspaceRequest = new OptionalWorkspaceIdentifier();
         var fileFormatRequest = new FileFormatIdentifier { FileFormat = SheetFileFormats.Csv };
-        var downloadRequest = new DownloadSheetRequest { FileName = "test" };
+        var downloadRequest = new DownloadSheetRequest { FileName = "absolute cinema2" };
 
         // Act
         var result = await actions.DownloadSheet(sheetRequest, workspaceRequest, fileFormatRequest, downloadRequest);
