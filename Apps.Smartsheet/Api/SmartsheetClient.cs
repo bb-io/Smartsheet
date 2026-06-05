@@ -20,7 +20,7 @@ public class SmartsheetClient(List<AuthenticationCredentialsProvider> creds) : B
 {
     public SmartsheetClient(IEnumerable<AuthenticationCredentialsProvider> creds) : this(creds.ToList()) { }
 
-    public async IAsyncEnumerable<T> PaginateOffset<T>(RestRequest request)
+    public async IAsyncEnumerable<T> PaginateOffset<T>(RestRequest request, int? timesToPaginate = null)
     {
         int currentPage = 1;
         int maxItemsPerPage = 100;
@@ -42,7 +42,8 @@ public class SmartsheetClient(List<AuthenticationCredentialsProvider> creds) : B
 
             currentPage++;
 
-        } while (totalItemsYielded < response.TotalCount);
+        } while (totalItemsYielded < response.TotalCount && 
+                 (!timesToPaginate.HasValue || currentPage <= timesToPaginate.Value));
     }
     
     public async IAsyncEnumerable<T> PaginateToken<T>(RestRequest request, int? timesToPaginate = null)

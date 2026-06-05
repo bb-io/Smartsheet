@@ -56,9 +56,9 @@ public class FolderActions(InvocationContext context) : SmartsheetInvocable(cont
 
         var request = new SmartsheetRequest(endpoint, Method.Post)
             .WithJsonBody(new { name = createInput.FolderName });
-        var response = await Client.ExecuteWithErrorHandling<ResultWrapper<FolderEntity>>(request);
+        var response = await Client.ExecuteWithErrorHandling<Result<FolderEntity>>(request);
         
-        return new(response.Result);
+        return new(response.Value);
     }
 
     // https://developers.smartsheet.com/api/smartsheet/openapi/folders/update-folder
@@ -69,16 +69,16 @@ public class FolderActions(InvocationContext context) : SmartsheetInvocable(cont
     {
         var request = new SmartsheetRequest($"folders/{folderIdentifier.FolderId}", Method.Put)
             .WithJsonBody(new { name = updateInput.FolderName });
-        var response = await Client.ExecuteWithErrorHandling<ResultWrapper<FolderEntity>>(request);
+        var response = await Client.ExecuteWithErrorHandling<Result<FolderEntity>>(request);
         
-        return new(response.Result);
+        return new(response.Value);
     }
 
     [Action("Delete folder", Description = "Delete an existing folder")]
     public async Task DeleteFolder([ActionParameter] FolderIdentifier folderIdentifier)
     {
         var request = new SmartsheetRequest($"folders/{folderIdentifier.FolderId}", Method.Delete);
-        var response = await Client.ExecuteWithErrorHandling<ResultWrapper<FolderEntity>>(request);
+        var response = await Client.ExecuteWithErrorHandling<Result>(request);
 
         if (!response.IsSuccessfulResponse)
             throw new PluginApplicationException(

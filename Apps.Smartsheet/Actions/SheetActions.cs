@@ -112,9 +112,9 @@ public class SheetActions(InvocationContext context, IFileManagementClient fileM
                     }
                 }
             });
-        var response = await Client.ExecuteWithErrorHandling<ResultWrapper<SheetEntity>>(request);
+        var response = await Client.ExecuteWithErrorHandling<Result<SheetEntity>>(request);
 
-        return new(response.Result);
+        return new(response.Value);
     }
 
     // https://developers.smartsheet.com/api/smartsheet/openapi/sheets/updatesheet
@@ -132,9 +132,9 @@ public class SheetActions(InvocationContext context, IFileManagementClient fileM
             throw new PluginMisconfigurationException("Please specify at least one property to update");
 
         var request = new SmartsheetRequest($"sheets/{sheetIdentifier.SheetId}", Method.Put).AddJsonBody(body);
-        var response = await Client.ExecuteWithErrorHandling<ResultWrapper<SheetEntity>>(request);
+        var response = await Client.ExecuteWithErrorHandling<Result<SheetEntity>>(request);
         
-        return new(response.Result);
+        return new(response.Value);
     }
 
     // https://developers.smartsheet.com/api/smartsheet/openapi/sheets/getsheet
@@ -198,8 +198,8 @@ public class SheetActions(InvocationContext context, IFileManagementClient fileM
             .AddHeader("Content-Disposition", dispositionHeaderValue)
             .AddParameter(contentType, fileBytes, ParameterType.RequestBody);
 
-        var response = await Client.ExecuteWithErrorHandling<ResultWrapper<SheetEntity>>(request);
-        return new(response.Result);
+        var response = await Client.ExecuteWithErrorHandling<Result<SheetEntity>>(request);
+        return new(response.Value);
     }
 
     private async Task<SheetEntity> FetchSheet(string sheetId)
