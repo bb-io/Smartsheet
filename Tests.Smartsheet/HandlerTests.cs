@@ -80,4 +80,19 @@ public class HandlerTests : TestBase
         PrintDataHandlerResult(result);
         Assert.IsNotNull(result);
     }
+
+    [TestMethod]
+    public async Task RowDataHandler_ReturnsColumns()
+    {
+        // Arrange
+        var sheetIdentifier = new SheetIdentifier { SheetId = "3188607262084996" };
+        var handler = new RowDataHandler(InvocationContext, sheetIdentifier);
+
+        // Act
+        var result = await handler.GetDataAsync(new() { SearchString = "" }, CancellationToken.None);
+
+        // Assert
+        PrintDataHandlerResult(result);
+        Assert.IsNotNull(result);
+    }
 }

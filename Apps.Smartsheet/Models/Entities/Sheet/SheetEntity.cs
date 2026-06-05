@@ -1,3 +1,4 @@
+using Apps.Smartsheet.Models.Entities.Row;
 using Newtonsoft.Json;
 
 namespace Apps.Smartsheet.Models.Entities.Sheet;
@@ -21,4 +22,7 @@ public class SheetEntity
 
     [JsonProperty("permalink")]
     public string Permalink { get; set; } = string.Empty;
+
+    [JsonProperty("rows")] 
+    public List<RowEntity> Rows { get; set; } = [];
 }

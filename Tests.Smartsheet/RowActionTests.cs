@@ -1,0 +1,90 @@
+using System.Globalization;
+using Apps.Smartsheet.Actions;
+using Apps.Smartsheet.Models.Identifiers;
+using Apps.Smartsheet.Models.Request.Row;
+using Blackbird.Applications.Sdk.Common.Exceptions;
+using Tests.Smartsheet.Base;
+
+namespace Tests.Smartsheet;
+
+[TestClass]
+public class RowActionTests : TestBase
+{
+    [TestMethod]
+    public async Task GetRow_ReturnsRow()
+    {
+        // Arrange
+        var actions = new RowActions(InvocationContext);
+        var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
+        var rowRequest = new RowIdentifier { RowId = "7026673031511940" };
+
+        // Act
+        var result = await actions.GetRow(sheetRequest, rowRequest);
+
+        // Assert
+        PrintJsonResult(result);
+        Assert.IsNotNull(result);
+    }
+
+    [TestMethod]
+    public async Task AddRow_ReturnsCreatedRow()
+    {
+        // Arrange
+        var actions = new RowActions(InvocationContext);
+        var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
+        var currentDate = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
+        var addRequest = new AddRowRequest
+        {
+            ColumnIds =    ["5817525312196484", "750975731404676", "7335646829252484"],
+            ColumnValues = ["test"            , currentDate      , "true"            ],
+            AppendToTop = true
+        };
+
+        // Act
+        var result = await actions.AddRow(sheetRequest, addRequest);
+
+        // Assert
+        PrintJsonResult(result);
+        Assert.IsNotNull(result);
+    }
+
+    [TestMethod]
+    public async Task UpdateRow_ReturnsUpdatedRow()
+    {
+        // Arrange
+        var actions = new RowActions(InvocationContext);
+        var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
+        var rowRequest = new RowIdentifier { RowId = "5698729171419012" };
+        var currentDate = (DateTime.UtcNow - TimeSpan.FromDays(3)).ToString(CultureInfo.InvariantCulture);
+        var updateRequest = new UpdateRowRequest
+        {
+            ColumnIds =    ["5817525312196484", "750975731404676", "7335646829252484"],
+            ColumnValues = ["test1"           , currentDate      , "true"          ]
+        };
+
+        // Act
+        var result = await actions.UpdateRow(sheetRequest, rowRequest, updateRequest);
+
+        // Assert
+        PrintJsonResult(result);
+        Assert.IsNotNull(result);
+    }
+    
+    [TestMethod]
+    public async Task DeleteRow_IsSuccess()
+    {
+        // Arrange
+        var actions = new RowActions(InvocationContext);
+        var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
+        var rowRequest = new RowIdentifier { RowId = "5698729171419012" };
+
+        // Act
+        await actions.DeleteRow(sheetRequest, rowRequest);
+
+        // Assert
+        var ex = await Assert.ThrowsExactlyAsync<PluginApplicationException>(async () => 
+            await actions.GetRow(sheetRequest, rowRequest));
+        
+        Assert.Contains(ex.Message, "Not Found");
+    }
+}
