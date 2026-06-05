@@ -20,10 +20,7 @@ public class FolderActions(InvocationContext context) : SmartsheetInvocable(cont
 {
     // https://developers.smartsheet.com/api/smartsheet/openapi/folders/get-folder-metadata
     [Action("Get folder", Description = "Get metadata for a specific folder")]
-    public async Task<FolderResponse> GetFolder(
-        [ActionParameter] FolderIdentifier folderIdentifier,
-        [ActionParameter] OptionalWorkspaceIdentifier workspaceIdentifier   // For the FF picker to work
-        )
+    public async Task<FolderResponse> GetFolder([ActionParameter] FolderIdentifier folderIdentifier)
     {
         var request = new SmartsheetRequest($"folders/{folderIdentifier.FolderId}/metadata");
         var response = await Client.ExecuteWithErrorHandling<FolderEntity>(request);
@@ -33,10 +30,7 @@ public class FolderActions(InvocationContext context) : SmartsheetInvocable(cont
     
     // https://developers.smartsheet.com/api/smartsheet/openapi/folders/get-folder-path
     [Action("Get folder path", Description = "Get path for a specific folder")]
-    public async Task<FolderPathResponse> GetFolderPath(
-        [ActionParameter] FolderIdentifier folderIdentifier,
-        [ActionParameter] OptionalWorkspaceIdentifier workspaceIdentifier   // For the FF picker to work
-    )
+    public async Task<FolderPathResponse> GetFolderPath([ActionParameter] FolderIdentifier folderIdentifier)
     {
         var request = new SmartsheetRequest($"folders/{folderIdentifier.FolderId}/path");
         var response = await Client.ExecuteWithErrorHandling<FolderPathEntity>(request);
@@ -71,7 +65,6 @@ public class FolderActions(InvocationContext context) : SmartsheetInvocable(cont
     [Action("Update folder", Description = "Update an existing folder")]
     public async Task<CreatedFolderResponse> UpdateFolder(
         [ActionParameter] FolderIdentifier folderIdentifier,
-        [ActionParameter] OptionalWorkspaceIdentifier workspaceIdentifier,   // For the FF picker to work
         [ActionParameter] UpdateFolderRequest updateInput)
     {
         var request = new SmartsheetRequest($"folders/{folderIdentifier.FolderId}", Method.Put)
@@ -82,10 +75,7 @@ public class FolderActions(InvocationContext context) : SmartsheetInvocable(cont
     }
 
     [Action("Delete folder", Description = "Delete an existing folder")]
-    public async Task DeleteFolder(
-        [ActionParameter] FolderIdentifier folderIdentifier,
-        [ActionParameter] OptionalWorkspaceIdentifier workspaceIdentifier   // For the FF picker to work
-    )
+    public async Task DeleteFolder([ActionParameter] FolderIdentifier folderIdentifier)
     {
         var request = new SmartsheetRequest($"folders/{folderIdentifier.FolderId}", Method.Delete);
         var response = await Client.ExecuteWithErrorHandling<ResultWrapper<FolderEntity>>(request);
