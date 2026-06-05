@@ -65,4 +65,19 @@ public class HandlerTests : TestBase
         PrintFileFolderPickerResult(result);
         Assert.IsNotNull(result);
     }
+
+    [TestMethod]
+    public async Task ColumnDataHandler_ReturnsColumns()
+    {
+        // Arrange
+        var sheetIdentifier = new SheetIdentifier { SheetId = "3188607262084996" };
+        var handler = new ColumnDataHandler(InvocationContext, sheetIdentifier);
+
+        // Act
+        var result = await handler.GetDataAsync(new() { SearchString = "5" }, CancellationToken.None);
+
+        // Assert
+        PrintDataHandlerResult(result);
+        Assert.IsNotNull(result);
+    }
 }
