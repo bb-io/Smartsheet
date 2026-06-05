@@ -34,11 +34,14 @@ public class SheetActionTests : TestBase
     {
         // Arrange
         var actions = new SheetActions(InvocationContext, FileManager);
-        var sheetRequest = new SheetIdentifier { SheetId = "4709706974056324" };
-        var workspaceRequest = new OptionalWorkspaceIdentifier();
+        var sheetRequest = new SheetIdentifier
+        {
+            SheetId = "4709706974056324",
+            WorkspaceId = ""
+        };
 
         // Act
-        var result = await actions.GetSheet(sheetRequest, workspaceRequest);
+        var result = await actions.GetSheet(sheetRequest);
 
         // Assert
         PrintJsonResult(result);
@@ -67,12 +70,15 @@ public class SheetActionTests : TestBase
     {
         // Arrange
         var actions = new SheetActions(InvocationContext, FileManager);
-        var sheetRequest = new SheetIdentifier { SheetId = "133455458291588" };
+        var sheetRequest = new SheetIdentifier
+        {
+            SheetId = "133455458291588",
+            WorkspaceId = ""
+        };
         var updateRequest = new UpdateSheetRequest { Name = "test123 updated" };
-        var workspaceRequest = new OptionalWorkspaceIdentifier();
 
         // Act
-        var result = await actions.UpdateSheet(sheetRequest, workspaceRequest, updateRequest);
+        var result = await actions.UpdateSheet(sheetRequest, updateRequest);
 
         // Assert
         PrintJsonResult(result);
@@ -102,15 +108,18 @@ public class SheetActionTests : TestBase
     {
         // Arrange
         var actions = new SheetActions(InvocationContext, FileManager);
-        var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
-        var workspaceRequest = new OptionalWorkspaceIdentifier();
+        var sheetRequest = new SheetIdentifier
+        {
+            SheetId = "3188607262084996",
+            WorkspaceId = ""
+        };
         var searchRequest = new SearchWithinSheetsRequest
         {
             TextToSearch = "value"
         };
 
         // Act
-        var result = await actions.SearchWithinSheet(sheetRequest, workspaceRequest, searchRequest);
+        var result = await actions.SearchWithinSheet(sheetRequest, searchRequest);
 
         // Assert
         PrintJsonResult(result);
@@ -122,13 +131,16 @@ public class SheetActionTests : TestBase
     {
         // Arrange
         var actions = new SheetActions(InvocationContext, FileManager);
-        var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
-        var workspaceRequest = new OptionalWorkspaceIdentifier();
+        var sheetRequest = new SheetIdentifier
+        {
+            SheetId = "3188607262084996",
+            WorkspaceId = ""
+        };
         var fileFormatRequest = new FileFormatIdentifier { FileFormat = SheetFileFormats.Csv };
         var downloadRequest = new DownloadSheetRequest { FileName = "absolute cinema2" };
 
         // Act
-        var result = await actions.DownloadSheet(sheetRequest, workspaceRequest, fileFormatRequest, downloadRequest);
+        var result = await actions.DownloadSheet(sheetRequest, fileFormatRequest, downloadRequest);
 
         // Assert
         Console.WriteLine(result.File.Name);

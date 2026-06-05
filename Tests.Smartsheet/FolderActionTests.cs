@@ -15,11 +15,14 @@ public class FolderActionTests : TestBase
     {
         // Arrange
         var actions = new FolderActions(InvocationContext);
-        var folderRequest = new FolderIdentifier { FolderId = "3836504997947268" };
-        var workspaceRequest = new OptionalWorkspaceIdentifier();
+        var folderRequest = new FolderIdentifier
+        {
+            FolderId = "3836504997947268",
+            WorkspaceId = ""
+        };
         
         // Act
-        var result = await actions.GetFolder(folderRequest, workspaceRequest);
+        var result = await actions.GetFolder(folderRequest);
 
         // Assert
         PrintJsonResult(result);
@@ -31,11 +34,14 @@ public class FolderActionTests : TestBase
     {
         // Arrange
         var actions = new FolderActions(InvocationContext);
-        var folderRequest = new FolderIdentifier { FolderId = "3836504997947268" };
-        var workspaceRequest = new OptionalWorkspaceIdentifier();
+        var folderRequest = new FolderIdentifier
+        {
+            FolderId = "3836504997947268", 
+            WorkspaceId = ""
+        };
         
         // Act
-        var result = await actions.GetFolderPath(folderRequest, workspaceRequest);
+        var result = await actions.GetFolderPath(folderRequest);
 
         // Assert
         Console.WriteLine(result.Path);
@@ -64,12 +70,15 @@ public class FolderActionTests : TestBase
     {
         // Arrange
         var actions = new FolderActions(InvocationContext);
-        var folderRequest = new FolderIdentifier { FolderId = "244421984839556" };
-        var workspaceRequest = new OptionalWorkspaceIdentifier { WorkspaceId = "3461696967731076" };
+        var folderRequest = new FolderIdentifier
+        {
+            FolderId = "244421984839556",
+            WorkspaceId = "3461696967731076"
+        };
         var updateRequest = new UpdateFolderRequest { FolderName = "123test new" };
 
         // Act
-        var result = await actions.UpdateFolder(folderRequest, workspaceRequest, updateRequest);
+        var result = await actions.UpdateFolder(folderRequest, updateRequest);
 
         // Assert
         PrintJsonResult(result);
@@ -81,15 +90,18 @@ public class FolderActionTests : TestBase
     {
         // Arrange
         var actions = new FolderActions(InvocationContext);
-        var folderRequest = new FolderIdentifier { FolderId = "3836504997947268" };
-        var workspaceRequest = new OptionalWorkspaceIdentifier();
+        var folderRequest = new FolderIdentifier
+        {
+            FolderId = "3836504997947268",
+            WorkspaceId = ""
+        };
 
         // Act
-        await actions.DeleteFolder(folderRequest, workspaceRequest);
+        await actions.DeleteFolder(folderRequest);
 
         // Assert
         var ex = await Assert.ThrowsExactlyAsync<PluginApplicationException>(async () => 
-            await actions.GetFolder(folderRequest, workspaceRequest));
+            await actions.GetFolder(folderRequest));
         
         Assert.Contains("Not Found", ex.Message);
     }

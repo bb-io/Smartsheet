@@ -63,7 +63,6 @@ public class SheetActions(InvocationContext context, IFileManagementClient fileM
     [Action("Search within sheet", Description = "Searches a specific sheet for the specified text")]
     public async Task<SearchWithinSheetsResponse> SearchWithinSheet(
         [ActionParameter] SheetIdentifier sheetIdentifier,
-        [ActionParameter] OptionalWorkspaceIdentifier workspaceIdentifier,  // For the FF picker to work
         [ActionParameter] SearchWithinSheetsRequest searchInput)
     {
         var request = new SmartsheetRequest($"search/sheets/{sheetIdentifier.SheetId}");
@@ -81,10 +80,7 @@ public class SheetActions(InvocationContext context, IFileManagementClient fileM
     
     // https://developers.smartsheet.com/api/smartsheet/openapi/sheets/getsheet
     [Action("Get sheet", Description = "Get a specific sheet")]
-    public async Task<SheetResponse> GetSheet(
-        [ActionParameter] SheetIdentifier sheetIdentifier,
-        [ActionParameter] OptionalWorkspaceIdentifier workspaceIdentifier  // For the FF picker to work)
-    )
+    public async Task<SheetResponse> GetSheet([ActionParameter] SheetIdentifier sheetIdentifier)
     {
         var folder = await FetchSheet(sheetIdentifier.SheetId);
         return new(folder);
@@ -125,7 +121,6 @@ public class SheetActions(InvocationContext context, IFileManagementClient fileM
     [Action("Update sheet", Description = "Update a specific sheet")]
     public async Task<CreatedSheetResponse> UpdateSheet(
         [ActionParameter] SheetIdentifier sheetIdentifier,
-        [ActionParameter] OptionalWorkspaceIdentifier workspaceIdentifier,  // For the FF picker to work
         [ActionParameter] UpdateSheetRequest updateInput)
     {
         var body = new Dictionary<string, string?>();
@@ -146,7 +141,6 @@ public class SheetActions(InvocationContext context, IFileManagementClient fileM
     [Action("Download sheet", Description = "Download a specific sheet")]
     public async Task<FileResponse> DownloadSheet(
         [ActionParameter] SheetIdentifier sheetIdentifier,
-        [ActionParameter] OptionalWorkspaceIdentifier workspaceIdentifier,  // For the FF picker to work
         [ActionParameter] FileFormatIdentifier formatIdentifier,
         [ActionParameter] DownloadSheetRequest downloadInput)
     {
