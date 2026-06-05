@@ -36,4 +36,9 @@ public class ColumnEntity
 
     [JsonProperty("primary")]
     public bool? IsPrimary { get; set; }
+
+    public override string ToString()
+    {
+        return $"{Title} (Type: {Type}{(IsLocked ? ", locked" : "")})";
+    }
 }

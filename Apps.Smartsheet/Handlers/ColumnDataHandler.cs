@@ -29,7 +29,7 @@ public class ColumnDataHandler : SmartsheetInvocable, IAsyncDataSourceItemHandle
         var request = new SmartsheetRequest($"sheets/{_sheetId}/columns");
         return await Client.PaginateToken<ColumnEntity>(request, timesToPaginate: 2)
             .WhereContains(x => x.Title, context.SearchString)
-            .Select(x => new DataSourceItem(x.Id, x.Title))
+            .Select(x => new DataSourceItem(x.Id, x.ToString()))
             .ToListAsync(ct);
     }
 }
