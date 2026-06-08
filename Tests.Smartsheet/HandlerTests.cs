@@ -95,4 +95,18 @@ public class HandlerTests : TestBase
         PrintDataHandlerResult(result);
         Assert.IsNotNull(result);
     }
+
+    [TestMethod]
+    public async Task ContactDataHandler_ReturnsContacts()
+    {
+        // Arrange
+        var handler = new ContactDataHandler(InvocationContext);
+
+        // Act
+        var result = await handler.GetDataAsync(new() { SearchString = "" }, CancellationToken.None);
+
+        // Assert
+        PrintDataHandlerResult(result);
+        Assert.IsNotNull(result);
+    }
 }
