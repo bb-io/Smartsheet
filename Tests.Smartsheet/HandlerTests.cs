@@ -1,6 +1,7 @@
 ﻿using Apps.Smartsheet.Handlers;
 using Apps.Smartsheet.Handlers.FileFolder;
 using Apps.Smartsheet.Models.Identifiers;
+using Apps.Smartsheet.Models.Identifiers.Optional;
 using Tests.Smartsheet.Base;
 
 namespace Tests.Smartsheet;
@@ -102,6 +103,22 @@ public class HandlerTests : TestBase
         // Arrange
         var handler = new ContactDataHandler(InvocationContext);
 
+        // Act
+        var result = await handler.GetDataAsync(new() { SearchString = "" }, CancellationToken.None);
+
+        // Assert
+        PrintDataHandlerResult(result);
+        Assert.IsNotNull(result);
+    }
+
+    [TestMethod]
+    public async Task DiscussionDataHandler_ReturnsDiscussions()
+    {
+        // Arrange
+        var sheetIdentifier = new SheetIdentifier { SheetId = "3188607262084996" };
+        var rowIdentifier = new OptionalRowIdentifier { RowId = "" };
+        var handler = new DiscussionDataHandler(InvocationContext, sheetIdentifier, rowIdentifier);
+        
         // Act
         var result = await handler.GetDataAsync(new() { SearchString = "" }, CancellationToken.None);
 
