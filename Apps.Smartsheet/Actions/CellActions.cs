@@ -1,5 +1,6 @@
 using Apps.Smartsheet.Api.Requests;
 using Apps.Smartsheet.Helper.Payload;
+using Apps.Smartsheet.Models.Entities.Cell;
 using Apps.Smartsheet.Models.Entities.Row;
 using Apps.Smartsheet.Models.Identifiers;
 using Apps.Smartsheet.Models.Request.Cell;
@@ -22,11 +23,7 @@ public class CellActions(InvocationContext context) : SmartsheetInvocable(contex
         [ActionParameter] RowIdentifier rowIdentifier,
         [ActionParameter] ColumnIdentifier columnIdentifier)
     {
-        var request = new SmartsheetRequest($"sheets/{sheetIdentifier.SheetId}/rows/{rowIdentifier.RowId}")
-            .AddQueryParameter("include", "columns");
-        var response = await Client.ExecuteWithErrorHandling<RowEntity>(request);
-        
-        var cell = response.Cells.First(x => x.ColumnId == columnIdentifier.ColumnId);
+        var cell = await FetchCell(sheetIdentifier.SheetId, rowIdentifier.RowId, columnIdentifier.ColumnId);
         return new(cell);
     }
     
@@ -46,10 +43,21 @@ public class CellActions(InvocationContext context) : SmartsheetInvocable(contex
 
         var request = new SmartsheetRequest($"sheets/{sheetIdentifier.SheetId}/rows", Method.Put)
             .WithJsonBody(body);
-        var response = await Client.ExecuteWithErrorHandling<Result<RowEntity[]>>(request);
+        await Client.ExecuteWithErrorHandling<Result<RowEntity[]>>(request);
 
-        var updatedRow = response.Value.First();
-        var updatedCell = updatedRow.Cells.First(x => x.ColumnId == columnIdentifier.ColumnId);
+        // The update response does not return values for multiselect cells
+        // So we need to refetch the cell
+        var updatedCell = await FetchCell(sheetIdentifier.SheetId, rowIdentifier.RowId, columnIdentifier.ColumnId);
         return new(updatedCell);
+    }
+
+    private async Task<CellEntity> FetchCell(string sheetId, string rowId, string columnId)
+    {
+        var request = new SmartsheetRequest($"sheets/{sheetId}/rows/{rowId}")
+            .AddQueryParameter("include", "columns");
+        var response = await Client.ExecuteWithErrorHandling<RowEntity>(request);
+        
+        var cell = response.Cells.First(x => x.ColumnId == columnId);
+        return cell;
     }
 }

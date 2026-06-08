@@ -16,7 +16,7 @@ public class CellActionTests : TestBase
         var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
         var rowRequest = new RowIdentifier { RowId = "7026673031511940" };
         var columnRequest = new ColumnIdentifier { ColumnId = "8680904674545540" };
-        var updateRequest = new UpdateCellRequest { NewValue = "[test3, test2]" };
+        var updateRequest = new UpdateCellRequest { NewValue = "[test2, test]" };
 
         // Act
         var result = await actions.UpdateCell(sheetRequest, rowRequest, columnRequest, updateRequest);

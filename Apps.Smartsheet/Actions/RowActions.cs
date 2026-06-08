@@ -23,11 +23,8 @@ public class RowActions(InvocationContext context) : SmartsheetInvocable(context
         [ActionParameter] SheetIdentifier sheetIdentifier,
         [ActionParameter] RowIdentifier rowIdentifier)
     {
-        var request = new SmartsheetRequest($"sheets/{sheetIdentifier.SheetId}/rows/{rowIdentifier.RowId}")
-            .AddQueryParameter("include", "columns");
-        var response = await Client.ExecuteWithErrorHandling<RowEntity>(request);
-
-        return new(response);
+        var row = await FetchRow(sheetIdentifier.SheetId, rowIdentifier.RowId);
+        return new(row);
     }
     
     // https://developers.smartsheet.com/api/smartsheet/openapi/rows/rows-addtosheet
@@ -70,7 +67,11 @@ public class RowActions(InvocationContext context) : SmartsheetInvocable(context
             .WithJsonBody(body);
         var response = await Client.ExecuteWithErrorHandling<Result<RowEntity[]>>(request);
 
-        return new(response.Value.First());
+        // The update response does not return values for multiselect cells
+        // So we need to refetch the row
+        string rowId = response.Value.First().Id;
+        var completeRow = await FetchRow(sheetIdentifier.SheetId, rowId);
+        return new(completeRow);
     }
 
     // https://developers.smartsheet.com/api/smartsheet/openapi/rows/delete-rows
@@ -86,5 +87,12 @@ public class RowActions(InvocationContext context) : SmartsheetInvocable(context
         if (!response.IsSuccessfulResponse)
             throw new PluginApplicationException(
                 "Failed to delete a row. No additional information received from Smartsheet");
+    }
+
+    private async Task<RowEntity> FetchRow(string sheetId, string rowId)
+    {
+        var request = new SmartsheetRequest($"sheets/{sheetId}/rows/{rowId}")
+            .AddQueryParameter("include", "columns");
+        return await Client.ExecuteWithErrorHandling<RowEntity>(request);
     }
 }

@@ -54,12 +54,12 @@ public class RowActionTests : TestBase
         // Arrange
         var actions = new RowActions(InvocationContext);
         var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
-        var rowRequest = new RowIdentifier { RowId = "5698729171419012" };
-        var currentDate = (DateTime.UtcNow - TimeSpan.FromDays(3)).ToString(CultureInfo.InvariantCulture);
+        var rowRequest = new RowIdentifier { RowId = "7026673031511940" };
+        var currentDateString = (DateTime.UtcNow - TimeSpan.FromDays(3)).ToString(CultureInfo.InvariantCulture);
         var updateRequest = new UpdateRowRequest
         {
-            ColumnIds =    ["5817525312196484", "750975731404676", "7335646829252484"],
-            ColumnValues = ["test1"           , currentDate      , "true"          ]
+            ColumnIds =    ["5817525312196484", "750975731404676", "7335646829252484", "8680904674545540"],
+            ColumnValues = ["test1"           , currentDateString, "true"            , "[test3, test2, test]" ]
         };
 
         // Act
