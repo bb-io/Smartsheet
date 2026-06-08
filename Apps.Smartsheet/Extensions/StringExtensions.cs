@@ -18,4 +18,16 @@ public static class StringExtensions
 
         return value;
     }
+
+    public static string Limit(this string value, int maxChars)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return value;
+
+        bool isLongerThanNeeded = value.Length > maxChars;
+        if (isLongerThanNeeded)
+            value = string.Concat(value.AsSpan(0, maxChars), "...");
+
+        return value;
+    }
 }

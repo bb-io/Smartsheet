@@ -12,7 +12,7 @@ public class UserDataHandler(InvocationContext context) : SmartsheetInvocable(co
     public async Task<IEnumerable<DataSourceItem>> GetDataAsync(DataSourceContext context, CancellationToken cancellationToken)
     {
         var request = new SmartsheetRequest("users");
-        return await Client.PaginateOffset<UserEntity>(request)
+        return await Client.PaginateOffset<UserEntity>(request, timesToPaginate: 2)
             .WhereContains(x => x.Name, context.SearchString)
             .Select(x => new DataSourceItem(x.Id, x.ToString()))
             .ToListAsync(cancellationToken);

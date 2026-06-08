@@ -30,7 +30,7 @@ public class RowDataHandler : SmartsheetInvocable, IAsyncDataSourceItemHandler
         var response = await Client.ExecuteWithErrorHandling<SheetEntity>(request);
         var rows = response.Rows;
 
-        var items = rows.Select(x => new DataSourceItem(x.Id, x.ToString()));
+        var items = rows.Select(x => new DataSourceItem(x.Id, x.ToString().Limit(60)));
         return items.WhereContains(x => x.DisplayName, context.SearchString).ToList();
     }
 }

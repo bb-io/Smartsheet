@@ -37,7 +37,7 @@ public class DiscussionDataHandler : SmartsheetInvocable, IAsyncDataSourceItemHa
             : $"sheets/{_sheetId}/rows/{_rowId}/discussions";
 
         var request = new SmartsheetRequest(endpoint).AddQueryParameter("include", "comments");
-        return await Client.PaginateOffset<DiscussionEntity>(request)
+        return await Client.PaginateOffset<DiscussionEntity>(request, timesToPaginate: 2)
             .WhereContains(x => x.Title, context.SearchString)
             .Select(x => new DataSourceItem(x.Id, x.ToString()))
             .ToListAsync(cancellationToken);
