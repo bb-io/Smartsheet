@@ -15,7 +15,7 @@ public class CommentEntity
     public DateTime CreatedAt { get; set; }
     
     [JsonProperty("modifiedAt")]
-    public DateTime? ModifiedAt { get; set; }
+    public DateTime ModifiedAt { get; set; }
     
     [JsonProperty("createdBy")]
     public MinimalUserEntity CreatedBy { get; set; } = null!;

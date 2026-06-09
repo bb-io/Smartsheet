@@ -75,7 +75,7 @@ public class HandlerTests : TestBase
         var handler = new ColumnDataHandler(InvocationContext, sheetIdentifier);
 
         // Act
-        var result = await handler.GetDataAsync(new() { SearchString = "5" }, CancellationToken.None);
+        var result = await handler.GetDataAsync(new() { SearchString = "" }, CancellationToken.None);
 
         // Assert
         PrintDataHandlerResult(result);
@@ -119,6 +119,22 @@ public class HandlerTests : TestBase
         var rowIdentifier = new OptionalRowIdentifier { RowId = "" };
         var handler = new DiscussionDataHandler(InvocationContext, sheetIdentifier, rowIdentifier);
         
+        // Act
+        var result = await handler.GetDataAsync(new() { SearchString = "" }, CancellationToken.None);
+
+        // Assert
+        PrintDataHandlerResult(result);
+        Assert.IsNotNull(result);
+    }
+
+    [TestMethod]
+    public async Task CommentDataHandler_ReturnsComments()
+    {
+        // Arrange
+        var sheetIdentifier = new SheetIdentifier { SheetId = "3188607262084996" };
+        var discussionIdentifier = new DiscussionIdentifier { DiscussionId = "2772422782128004" };
+        var handler = new CommentDataHandler(InvocationContext, sheetIdentifier, discussionIdentifier);
+
         // Act
         var result = await handler.GetDataAsync(new() { SearchString = "" }, CancellationToken.None);
 

@@ -25,7 +25,7 @@ public record CommentResponse
     public DateTime CreatedAt { get; set; }
     
     [Display("Modified at")]
-    public DateTime? ModifiedAt { get; set; }
+    public DateTime ModifiedAt { get; set; }
 
     [Display("Created by user name")] 
     public string CreatedByUserName { get; set; }
