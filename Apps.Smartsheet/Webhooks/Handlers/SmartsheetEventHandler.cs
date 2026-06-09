@@ -10,10 +10,10 @@ using RestSharp;
 
 namespace Apps.Smartsheet.Webhooks.Handlers;
 
-public abstract class SmartsheetEventHandler(InvocationContext context, [WebhookParameter(true)] SheetIdentifier sheetIdentifier) 
+public class SmartsheetEventHandler(InvocationContext context, [WebhookParameter(true)] SheetIdentifier sheetIdentifier) 
     : SmartsheetInvocable(context), IWebhookEventHandler
 {
-    protected virtual string[] Events => ["*.*"]; 
+    private string[] Events => ["*.*"]; 
 
     // https://developers.smartsheet.com/api/smartsheet/openapi/webhooks/createwebhook
     public async Task SubscribeAsync(IEnumerable<AuthenticationCredentialsProvider> creds, Dictionary<string, string> values)
