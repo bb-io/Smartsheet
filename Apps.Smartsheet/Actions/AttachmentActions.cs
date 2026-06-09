@@ -113,7 +113,15 @@ public class AttachmentActions(InvocationContext context, IFileManagementClient 
         }
         catch (Exception ex)
         {
-            WebhookLogger.Log(ex);
+            var safeErrorPayload = new 
+            {
+                ErrorMessage = ex.Message,
+                StackTrace = ex.StackTrace,
+                Source = ex.Source,
+                InnerException = ex.InnerException?.Message 
+            };
+
+            WebhookLogger.Log(safeErrorPayload);
             throw;
         }
     }

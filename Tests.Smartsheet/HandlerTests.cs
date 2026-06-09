@@ -132,7 +132,7 @@ public class HandlerTests : TestBase
     {
         // Arrange
         var sheetIdentifier = new SheetIdentifier { SheetId = "3188607262084996" };
-        var discussionIdentifier = new DiscussionIdentifier { DiscussionId = "2772422782128004" };
+        var discussionIdentifier = new OptionalDiscussionIdentifier { DiscussionId = "2772422782128004" };
         var handler = new CommentDataHandler(InvocationContext, sheetIdentifier, discussionIdentifier);
 
         // Act
