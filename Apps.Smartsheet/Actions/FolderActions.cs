@@ -1,5 +1,6 @@
 using Apps.Smartsheet.Api.Requests;
 using Apps.Smartsheet.Extensions;
+using Apps.Smartsheet.Helper.Error;
 using Apps.Smartsheet.Models.Entities.Folder;
 using Apps.Smartsheet.Models.Identifiers;
 using Apps.Smartsheet.Models.Identifiers.Optional;
@@ -81,7 +82,6 @@ public class FolderActions(InvocationContext context) : SmartsheetInvocable(cont
         var response = await Client.ExecuteWithErrorHandling<Result>(request);
 
         if (!response.IsSuccessfulResponse)
-            throw new PluginApplicationException(
-                "Failed to delete a folder. No additional information received from Smartsheet");
+            throw new PluginApplicationException(ErrorMessageHelper.GenerateFailedToDeleteMessage("folder"));
     }
 }

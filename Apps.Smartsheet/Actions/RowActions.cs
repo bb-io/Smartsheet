@@ -1,4 +1,5 @@
 using Apps.Smartsheet.Api.Requests;
+using Apps.Smartsheet.Helper.Error;
 using Apps.Smartsheet.Helper.Payload;
 using Apps.Smartsheet.Models.Entities.Row;
 using Apps.Smartsheet.Models.Identifiers;
@@ -85,8 +86,7 @@ public class RowActions(InvocationContext context) : SmartsheetInvocable(context
         var response = await Client.ExecuteWithErrorHandling<Result>(request);
         
         if (!response.IsSuccessfulResponse)
-            throw new PluginApplicationException(
-                "Failed to delete a row. No additional information received from Smartsheet");
+            throw new PluginApplicationException(ErrorMessageHelper.GenerateFailedToDeleteMessage("row"));
     }
 
     private async Task<RowEntity> FetchRow(string sheetId, string rowId)
