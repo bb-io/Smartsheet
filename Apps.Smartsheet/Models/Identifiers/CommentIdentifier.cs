@@ -8,4 +8,7 @@ public class CommentIdentifier
 {
     [Display("Comment ID"), DataSource(typeof(CommentDataHandler))]
     public string CommentId { get; set; } = string.Empty;
+
+    [Display("Discussion ID"), DataSource(typeof(DiscussionDataHandler))]
+    public string? DiscussionId { get; set; }
 }

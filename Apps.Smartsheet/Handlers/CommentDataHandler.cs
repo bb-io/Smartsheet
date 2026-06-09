@@ -2,6 +2,7 @@ using Apps.Smartsheet.Api.Requests;
 using Apps.Smartsheet.Extensions;
 using Apps.Smartsheet.Models.Entities.Discussion;
 using Apps.Smartsheet.Models.Identifiers;
+using Apps.Smartsheet.Models.Identifiers.Optional;
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Dynamic;
 using Blackbird.Applications.Sdk.Common.Exceptions;
@@ -17,7 +18,7 @@ public class CommentDataHandler : SmartsheetInvocable, IAsyncDataSourceItemHandl
     public CommentDataHandler(
         InvocationContext invocationContext,
         [ActionParameter] SheetIdentifier sheetIdentifier,
-        [ActionParameter] DiscussionIdentifier discussionIdentifier) : base(invocationContext)
+        [ActionParameter] OptionalDiscussionIdentifier discussionIdentifier) : base(invocationContext)
     {
         if (string.IsNullOrEmpty(sheetIdentifier.SheetId))
             throw new PluginMisconfigurationException("Please specify a sheet ID first");
