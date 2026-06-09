@@ -88,42 +88,25 @@ public class AttachmentActions(InvocationContext context, IFileManagementClient 
         [ActionParameter] SheetIdentifier sheetIdentifier,
         [ActionParameter] AttachmentIdentifier attachmentIdentifier)
     {
-        try
-        {
-            var attachment = await FetchAttachment(sheetIdentifier.SheetId, attachmentIdentifier.AttachmentId);
-            if (string.IsNullOrWhiteSpace(attachment.Url))
-                throw new PluginMisconfigurationException("This attachment can't be downloaded");
+        var attachment = await FetchAttachment(sheetIdentifier.SheetId, attachmentIdentifier.AttachmentId);
+        if (string.IsNullOrWhiteSpace(attachment.Url))
+            throw new PluginMisconfigurationException("This attachment can't be downloaded");
 
-            var client = new RestClient();
-            var request = new RestRequest(attachment.Url);
-            var networkStream = await client.DownloadStreamAsync(request) ??
-                                throw new PluginApplicationException(
-                                    "Failed to download a file: empty stream received");
+        var client = new RestClient();
+        var request = new RestRequest(attachment.Url);
+        var networkStream = await client.DownloadStreamAsync(request) ??
+                            throw new PluginApplicationException("Failed to download a file: empty stream received");
 
-            var seekableStream = new MemoryStream();
-            await networkStream.CopyToAsync(seekableStream);
-            seekableStream.Position = 0;
+        var seekableStream = new MemoryStream();
+        await networkStream.CopyToAsync(seekableStream);
+        seekableStream.Position = 0;
 
-            var file = await fileManagementClient.UploadAsync(
-                seekableStream,
-                attachment.MimeType ?? "application/octet-stream",
-                attachment.Name);
-
-            return new(file);
-        }
-        catch (Exception ex)
-        {
-            var safeErrorPayload = new 
-            {
-                ErrorMessage = ex.Message,
-                StackTrace = ex.StackTrace,
-                Source = ex.Source,
-                InnerException = ex.InnerException?.Message 
-            };
-
-            WebhookLogger.Log(safeErrorPayload);
-            throw;
-        }
+        var mimeType = attachment.MimeType ?? "application/octet-stream";
+        if (mimeType.Contains(';'))
+            mimeType = mimeType.Split(';')[0].Trim();
+        
+        var file = await fileManagementClient.UploadAsync(seekableStream, mimeType, attachment.Name);
+        return new(file);
     }
 
     // https://developers.smartsheet.com/api/smartsheet/openapi/attachments/attachments-get

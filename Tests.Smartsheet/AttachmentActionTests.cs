@@ -58,13 +58,13 @@ public class AttachmentActionTests : TestBase
         // Arrange
         var actions = new AttachmentActions(InvocationContext, FileManager);
         var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
-        var attachmentRequest = new AttachmentIdentifier { AttachmentId = "6724129434013572" };
+        var attachmentRequest = new AttachmentIdentifier { AttachmentId = "5297247211655044" };
 
         // Act
         var result = await actions.DownloadAttachment(sheetRequest, attachmentRequest);
 
         // Assert
-        Console.WriteLine(result.File.Name);
+        PrintJsonResult(result);
         Assert.IsNotNull(result.File);
     }
 
