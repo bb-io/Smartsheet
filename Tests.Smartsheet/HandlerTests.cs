@@ -142,4 +142,19 @@ public class HandlerTests : TestBase
         PrintDataHandlerResult(result);
         Assert.IsNotNull(result);
     }
+
+    [TestMethod]
+    public async Task AttachmentDataHandler_ReturnsAttachments()
+    {
+        // Arrange
+        var sheetIdentifier = new SheetIdentifier { SheetId = "3188607262084996" };
+        var handler = new AttachmentDataHandler(InvocationContext, sheetIdentifier);
+
+        // Act
+        var result = await handler.GetDataAsync(new() { SearchString = "" }, CancellationToken.None);
+
+        // Assert
+        PrintDataHandlerResult(result);
+        Assert.IsNotNull(result);
+    }
 }
