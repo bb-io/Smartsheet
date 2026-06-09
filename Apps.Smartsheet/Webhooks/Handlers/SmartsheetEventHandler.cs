@@ -3,14 +3,14 @@ using Apps.Smartsheet.Models.Identifiers;
 using Apps.Smartsheet.Models.Utility.Wrapper;
 using Apps.Smartsheet.Webhooks.Models.Entity;
 using Blackbird.Applications.Sdk.Common.Authentication;
-using Blackbird.Applications.Sdk.Common.Exceptions;
 using Blackbird.Applications.Sdk.Common.Invocation;
 using Blackbird.Applications.Sdk.Common.Webhooks;
+using Blackbird.Applications.Sdk.Utils.Extensions.Http;
 using RestSharp;
 
 namespace Apps.Smartsheet.Webhooks.Handlers;
 
-public abstract class EventHandler(InvocationContext context, [WebhookParameter(true)] SheetIdentifier sheetIdentifier) 
+public abstract class SmartsheetEventHandler(InvocationContext context, [WebhookParameter(true)] SheetIdentifier sheetIdentifier) 
     : SmartsheetInvocable(context), IWebhookEventHandler
 {
     protected virtual string[] Events => ["*.*"]; 
@@ -19,21 +19,19 @@ public abstract class EventHandler(InvocationContext context, [WebhookParameter(
     public async Task SubscribeAsync(IEnumerable<AuthenticationCredentialsProvider> creds, Dictionary<string, string> values)
     {
         var payloadUrl = values["payloadUrl"];
-
         string sheetId = sheetIdentifier.SheetId;
-        if (string.IsNullOrEmpty(sheetId))
-            throw new PluginMisconfigurationException("Please specify a sheet ID first");
-
-        var request = new SmartsheetRequest("webhooks", Method.Post);
-        request.AddJsonBody(new
-        {
-            name = $"Blackbird Webhook - Sheet {sheetId}",
-            callbackUrl = payloadUrl,
-            scope = "sheet",
-            scopeObjectId = sheetId,
-            events = Events,
-            version = 1 
-        });
+        
+        var request = new SmartsheetRequest("webhooks", Method.Post)
+            .WithJsonBody(
+                new
+                {
+                    name = $"Blackbird Webhook - Sheet {sheetId}",
+                    callbackUrl = payloadUrl,
+                    scope = "sheet",
+                    scopeObjectId = sheetId,
+                    events = Events,
+                    version = 1 
+                });
 
         await Client.ExecuteWithErrorHandling<Result<WebhookEntity>>(request);
     }
