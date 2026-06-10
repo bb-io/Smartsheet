@@ -16,12 +16,13 @@ public class SmartsheetEventHandler(InvocationContext context, [WebhookParameter
     private static string[] Events => ["*.*"]; 
 
     // https://developers.smartsheet.com/api/smartsheet/openapi/webhooks/createwebhook
+    // https://developers.smartsheet.com/api/smartsheet/openapi/webhooks/updatewebhook
     public async Task SubscribeAsync(IEnumerable<AuthenticationCredentialsProvider> creds, Dictionary<string, string> values)
     {
         var payloadUrl = values["payloadUrl"];
         string sheetId = sheetIdentifier.SheetId;
         
-        var request = new SmartsheetRequest("webhooks", Method.Post)
+        var createRequest = new SmartsheetRequest("webhooks", Method.Post)
             .WithJsonBody(
                 new
                 {
@@ -32,8 +33,12 @@ public class SmartsheetEventHandler(InvocationContext context, [WebhookParameter
                     events = Events,
                     version = 1 
                 });
+        var createResponse = await Client.ExecuteWithErrorHandling<Result<WebhookEntity>>(createRequest);
 
-        await Client.ExecuteWithErrorHandling<Result<WebhookEntity>>(request);
+        var enableRequest = new SmartsheetRequest($"webhooks/{createResponse.Value.Id}", Method.Put)
+            .WithJsonBody(new { enabled = true });
+
+        await Client.ExecuteWithErrorHandling<Result<WebhookEntity>>(enableRequest);
     }
 
     // https://developers.smartsheet.com/api/smartsheet/openapi/webhooks/deletewebhook
