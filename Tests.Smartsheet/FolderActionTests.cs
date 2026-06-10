@@ -17,7 +17,7 @@ public class FolderActionTests : TestBase
         var actions = new FolderActions(InvocationContext);
         var folderRequest = new FolderIdentifier
         {
-            FolderId = "3836504997947268",
+            FolderId = "5003250580645764",
             WorkspaceId = ""
         };
         
@@ -36,7 +36,7 @@ public class FolderActionTests : TestBase
         var actions = new FolderActions(InvocationContext);
         var folderRequest = new FolderIdentifier
         {
-            FolderId = "3836504997947268", 
+            FolderId = "5003250580645764", 
             WorkspaceId = ""
         };
         
@@ -53,7 +53,7 @@ public class FolderActionTests : TestBase
     {
         // Arrange
         var actions = new FolderActions(InvocationContext);
-        var folderRequest = new OptionalFolderIdentifier { FolderId = "244421984839556" };
+        var folderRequest = new OptionalFolderIdentifier { FolderId = "5003250580645764" };
         var workspaceRequest = new WorkspaceIdentifier { WorkspaceId = "3461696967731076" };
         var createRequest = new CreateFolderRequest { FolderName = "222test new" };
 
@@ -72,7 +72,7 @@ public class FolderActionTests : TestBase
         var actions = new FolderActions(InvocationContext);
         var folderRequest = new FolderIdentifier
         {
-            FolderId = "244421984839556",
+            FolderId = "7686058952419204",
             WorkspaceId = "3461696967731076"
         };
         var updateRequest = new UpdateFolderRequest { FolderName = "123test new" };
@@ -92,7 +92,7 @@ public class FolderActionTests : TestBase
         var actions = new FolderActions(InvocationContext);
         var folderRequest = new FolderIdentifier
         {
-            FolderId = "3836504997947268",
+            FolderId = "7686058952419204",
             WorkspaceId = ""
         };
 

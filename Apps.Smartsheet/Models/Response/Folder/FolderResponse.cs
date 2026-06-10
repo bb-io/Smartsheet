@@ -1,3 +1,4 @@
+using Apps.Smartsheet.Models.Entities.Children;
 using Apps.Smartsheet.Models.Entities.Folder;
 using Blackbird.Applications.Sdk.Common;
 
@@ -5,7 +6,7 @@ namespace Apps.Smartsheet.Models.Response.Folder;
 
 public record FolderResponse : CreatedFolderResponse
 {
-    public FolderResponse(FolderEntity folder) : base(folder)
+    public FolderResponse(ChildEntity folder) : base(folder)
     {
         CreatedAt = folder.CreatedAt;
         ModifiedAt = folder.ModifiedAt;

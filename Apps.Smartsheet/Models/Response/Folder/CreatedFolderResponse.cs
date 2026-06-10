@@ -1,11 +1,11 @@
-using Apps.Smartsheet.Models.Entities.Folder;
+using Apps.Smartsheet.Models.Entities.Children;
 using Blackbird.Applications.Sdk.Common;
 
 namespace Apps.Smartsheet.Models.Response.Folder;
 
 public record CreatedFolderResponse
 {
-    public CreatedFolderResponse(FolderEntity folder)
+    public CreatedFolderResponse(ChildEntity folder)
     {
         Id = folder.Id;
         Name = folder.Name;

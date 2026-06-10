@@ -1,6 +1,7 @@
 using Apps.Smartsheet.Api.Requests;
 using Apps.Smartsheet.Extensions;
 using Apps.Smartsheet.Helper.Error;
+using Apps.Smartsheet.Models.Entities.Children;
 using Apps.Smartsheet.Models.Entities.Folder;
 using Apps.Smartsheet.Models.Identifiers;
 using Apps.Smartsheet.Models.Identifiers.Optional;
@@ -24,7 +25,7 @@ public class FolderActions(InvocationContext context) : SmartsheetInvocable(cont
     public async Task<FolderResponse> GetFolder([ActionParameter] FolderIdentifier folderIdentifier)
     {
         var request = new SmartsheetRequest($"folders/{folderIdentifier.FolderId}/metadata");
-        var response = await Client.ExecuteWithErrorHandling<FolderEntity>(request);
+        var response = await Client.ExecuteWithErrorHandling<ChildEntity>(request);
         
         return new(response);
     }
@@ -57,7 +58,7 @@ public class FolderActions(InvocationContext context) : SmartsheetInvocable(cont
 
         var request = new SmartsheetRequest(endpoint, Method.Post)
             .WithJsonBody(new { name = createInput.FolderName });
-        var response = await Client.ExecuteWithErrorHandling<Result<FolderEntity>>(request);
+        var response = await Client.ExecuteWithErrorHandling<Result<ChildEntity>>(request);
         
         return new(response.Value);
     }
@@ -70,7 +71,7 @@ public class FolderActions(InvocationContext context) : SmartsheetInvocable(cont
     {
         var request = new SmartsheetRequest($"folders/{folderIdentifier.FolderId}", Method.Put)
             .WithJsonBody(new { name = updateInput.FolderName });
-        var response = await Client.ExecuteWithErrorHandling<Result<FolderEntity>>(request);
+        var response = await Client.ExecuteWithErrorHandling<Result<ChildEntity>>(request);
         
         return new(response.Value);
     }
