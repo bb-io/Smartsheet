@@ -13,7 +13,7 @@ namespace Apps.Smartsheet.Webhooks.Handlers;
 public class SmartsheetEventHandler(InvocationContext context, [WebhookParameter(true)] SheetIdentifier sheetIdentifier) 
     : SmartsheetInvocable(context), IWebhookEventHandler
 {
-    private string[] Events => ["*.*"]; 
+    private static string[] Events => ["*.*"]; 
 
     // https://developers.smartsheet.com/api/smartsheet/openapi/webhooks/createwebhook
     public async Task SubscribeAsync(IEnumerable<AuthenticationCredentialsProvider> creds, Dictionary<string, string> values)

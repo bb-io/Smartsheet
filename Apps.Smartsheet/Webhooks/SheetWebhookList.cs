@@ -18,6 +18,7 @@ public class SheetWebhookList(InvocationContext context) : SmartsheetInvocable(c
         [WebhookParameter(true)] SheetIdentifier sheetIdentifier)
     {
         var processedEvent = WebhookHelper.ProcessEvent(request, "sheet", "updated");
+        WebhookLogger.Log(processedEvent);
 
         if (processedEvent.EventIds == null || processedEvent.EventIds.Count == 0)
         {
