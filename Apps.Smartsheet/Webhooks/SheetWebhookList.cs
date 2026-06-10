@@ -23,14 +23,7 @@ public class SheetWebhookList(InvocationContext context) : SmartsheetInvocable(c
         WebhookLogger.Log(processedEvent);
 
         if (processedEvent.EventIds == null || processedEvent.EventIds.Count == 0)
-        {
-            return new WebhookResponse<SheetResponse>
-            {
-                HttpResponseMessage = processedEvent.Response,
-                ReceivedWebhookRequestType = WebhookRequestType.Preflight,
-                Result = null
-            };
-        }
+            return WebhookHelper.Preflight<SheetResponse>(processedEvent.Response);
 
         var getRequest = new SmartsheetRequest($"sheets/{sheetIdentifier.SheetId}");
         var sheetEntity = await Client.ExecuteWithErrorHandling<SheetEntity>(getRequest);

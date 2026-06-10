@@ -42,4 +42,15 @@ public static class WebhookHelper
 
         return new(new HttpResponseMessage(HttpStatusCode.OK), matchingEventIds);
     }
+
+    public static WebhookResponse<T> Preflight<T>(HttpResponseMessage responseMessage) 
+        where T : class
+    {
+        return new WebhookResponse<T>
+        {
+            HttpResponseMessage = responseMessage,
+            ReceivedWebhookRequestType = WebhookRequestType.Preflight,
+            Result = null
+        };
+    }
 }
