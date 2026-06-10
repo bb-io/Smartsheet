@@ -27,6 +27,7 @@ public class SheetWebhookList(InvocationContext context) : SmartsheetInvocable(c
             return new WebhookResponse<SheetResponse>
             {
                 HttpResponseMessage = processedEvent.Response,
+                ReceivedWebhookRequestType = WebhookRequestType.Preflight,
                 Result = null
             };
         }
