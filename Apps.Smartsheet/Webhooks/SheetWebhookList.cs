@@ -17,12 +17,8 @@ public class SheetWebhookList(InvocationContext context) : SmartsheetInvocable(c
         WebhookRequest request,
         [WebhookParameter(true)] SheetIdentifier sheetIdentifier)
     {
-        WebhookLogger.Log("TRIGGER METHOD WAS HIT");
-        
         var processedEvent = WebhookHelper.ProcessEvent(request, "sheet", "updated");
-        WebhookLogger.Log(processedEvent);
-
-        if (processedEvent.EventIds == null || processedEvent.EventIds.Count == 0)
+        if (processedEvent.ShouldPreflight)
             return WebhookHelper.Preflight<SheetResponse>(processedEvent.Response);
 
         var getRequest = new SmartsheetRequest($"sheets/{sheetIdentifier.SheetId}");
