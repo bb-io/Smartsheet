@@ -34,11 +34,16 @@ public class SmartsheetEventHandler(InvocationContext context, [WebhookParameter
                     version = 1 
                 });
         var createResponse = await Client.ExecuteWithErrorHandling<Result<WebhookEntity>>(createRequest);
+        var webhookId = createResponse.Value.Id;
 
-        var enableRequest = new SmartsheetRequest($"webhooks/{createResponse.Value.Id}", Method.Put)
-            .WithJsonBody(new { enabled = true });
-
-        await Client.ExecuteWithErrorHandling<Result<WebhookEntity>>(enableRequest);
+        _ = Task.Run(async () =>
+        {
+            await Task.Delay(3000);
+            
+            var enableRequest = new SmartsheetRequest($"webhooks/{webhookId}", Method.Put)
+                .WithJsonBody(new { enabled = true });
+            await Client.ExecuteWithErrorHandling(enableRequest);
+        });
     }
 
     // https://developers.smartsheet.com/api/smartsheet/openapi/webhooks/deletewebhook
