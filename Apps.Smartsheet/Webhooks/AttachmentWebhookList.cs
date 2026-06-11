@@ -11,7 +11,7 @@ using Blackbird.Applications.Sdk.Common.Webhooks;
 
 namespace Apps.Smartsheet.Webhooks;
 
-[WebhookList("Attachment")]
+[WebhookList("Attachments")]
 public class AttachmentWebhookList(InvocationContext context) : SmartsheetInvocable(context)
 {
     [Webhook("On attachments created", typeof(SmartsheetEventHandler),
