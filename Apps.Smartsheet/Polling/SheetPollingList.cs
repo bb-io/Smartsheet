@@ -3,7 +3,6 @@ using Apps.Smartsheet.Extensions;
 using Apps.Smartsheet.Helper.Polling;
 using Apps.Smartsheet.Models.Entities.Sheet;
 using Apps.Smartsheet.Models.Response.Sheet;
-using Apps.Smartsheet.Models.Utility.Pagination;
 using Apps.Smartsheet.Polling.Models.Memory;
 using Apps.Smartsheet.Polling.Models.Request.Sheet;
 using Blackbird.Applications.Sdk.Common.Invocation;
@@ -26,18 +25,16 @@ public class SheetPollingList(InvocationContext context) : SmartsheetInvocable(c
             return PollingHelper.DontFlyBird<SearchSheetsResponse>(interactionTimestamp);
 
         var request = new SmartsheetRequest("sheets")
-            .AddQueryParameter("modifiedSince", pollingRequest.Memory.LastInteraction.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"))
-            .AddQueryParameter("includeAll", "true");
+            .AddQueryParameter("modifiedSince", pollingRequest.Memory.LastInteraction.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"));
         
-        var response = await Client.ExecuteWithErrorHandling<OffsetPaginationResponse<SheetEntity>>(request);
-        var filtered = response.Data
+        var response = await Client.PaginateOffset<SheetEntity>(request)
             .Where(x => x.CreatedAt > pollingRequest.Memory.LastInteraction.Value)
             .WhereContains(x => x.Name, createInput.NameContains)
             .Select(x => new SheetResponse(x))
-            .ToArray();
+            .ToArrayAsync();
         
-        return filtered.Length == 0 
+        return response.Length == 0 
             ? PollingHelper.DontFlyBird<SearchSheetsResponse>(interactionTimestamp) 
-            : PollingHelper.FlyBird<SearchSheetsResponse>(new(filtered), interactionTimestamp);
+            : PollingHelper.FlyBird<SearchSheetsResponse>(new(response), interactionTimestamp);
     }
 }
