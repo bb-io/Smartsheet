@@ -36,6 +36,18 @@ public class SmartsheetEventHandler(InvocationContext context, [WebhookParameter
         var createResponse = await Client.ExecuteWithErrorHandling<Result<WebhookEntity>>(createRequest);
         var webhookId = createResponse.Value.Id;
 
+        /*
+         * Spins off a new background thread that validates the webhook.
+         * Because if we fire that POST request above, Smartsheet will pause it
+         * and will immediately send a new handshake request to us.
+         * And it'll expect us to send the response during 5 seconds
+         *
+         * So if we wait for the POST request to finish, it'll just fail the entire subscription flow
+         * and timeout the handshake. So we need this Task.Run hack
+         *
+         * The delay is needed to ensure that the POST request actually delivers to the server
+         * so we don't get a 404 error when trying to access the webhook by its ID
+         */
         _ = Task.Run(async () =>
         {
             await Task.Delay(3000);
