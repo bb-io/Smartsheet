@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using Apps.Smartsheet.Authenticators;
 using Apps.Smartsheet.Constants;
 using Apps.Smartsheet.Models.Utility.Error;
@@ -15,7 +14,7 @@ namespace Apps.Smartsheet.Api;
 public class SmartsheetClient(List<AuthenticationCredentialsProvider> creds) : BlackBirdRestClient(new() 
 {
     BaseUrl = new Uri(creds.Get(CredsNames.BaseUrl).Value),
-    Authenticator = new ApiTokenAuthenticator(creds)
+    Authenticator = AuthenticatorFactory.Create(creds)
 })
 {
     public SmartsheetClient(IEnumerable<AuthenticationCredentialsProvider> creds) : this(creds.ToList()) { }

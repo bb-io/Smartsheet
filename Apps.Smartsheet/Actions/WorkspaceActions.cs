@@ -11,6 +11,7 @@ namespace Apps.Smartsheet.Actions;
 [ActionList("Workspaces")]
 public class WorkspaceActions(InvocationContext context) : SmartsheetInvocable(context)
 {
+    // https://developers.smartsheet.com/api/smartsheet/openapi/workspaces/list-workspaces
     [Action("Search workspaces", Description = "Search workspaces that the user has access to")]
     public async Task<SearchWorkspacesResponse> SearchWorkspaces()
     {
@@ -22,6 +23,7 @@ public class WorkspaceActions(InvocationContext context) : SmartsheetInvocable(c
         return new(response);
     }
     
+    // https://developers.smartsheet.com/api/smartsheet/openapi/workspaces/get-workspace-metadata
     [Action("Get workspace", Description = "Get a specific workspace")]
     public async Task<WorkspaceResponse> GetWorkspace([ActionParameter] WorkspaceIdentifier workspaceIdentifier)
     {

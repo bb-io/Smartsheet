@@ -11,6 +11,7 @@ namespace Apps.Smartsheet.Actions;
 [ActionList("Users")]
 public class UserActions(InvocationContext invocationContext) : SmartsheetInvocable(invocationContext)
 {
+    // https://developers.smartsheet.com/api/smartsheet/openapi/users/list-users
     [Action("Search users", Description = "Search users in the organization account")]
     public async Task<SearchUsersResponse> SearchUsers()
     {
@@ -22,6 +23,7 @@ public class UserActions(InvocationContext invocationContext) : SmartsheetInvoca
         return new SearchUsersResponse(response);
     }
 
+    // https://developers.smartsheet.com/api/smartsheet/openapi/users/get-user
     [Action("Get user", Description = "Get a specific user")]
     public async Task<UserResponse> GetUser([ActionParameter] UserIdentifier userIdentifier)
     {

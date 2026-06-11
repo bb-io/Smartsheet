@@ -17,6 +17,7 @@ namespace Apps.Smartsheet.Actions;
 [ActionList("Cells")]
 public class CellActions(InvocationContext context) : SmartsheetInvocable(context)
 {
+    // https://developers.smartsheet.com/api/smartsheet/openapi/rows/row-get
     [Action("Get cell value", Description = "Get value of a specific cell")]
     public async Task<CellResponse> GetCell(
         [ActionParameter] SheetIdentifier sheetIdentifier,
