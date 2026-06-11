@@ -58,10 +58,12 @@ reference e.g. 'My Smartsheet connection'. Choose the base URL of your instance.
 
 ## Additional notes
 
+- This app requires a Business, Enterprise or Advanced Work Management Smartsheet plan.
 - Please note that newly created or recently updated data may not be immediately discoverable via search. 
 This is a limitation of the Smartsheet API.
 - When updating cell values, make sure to wrap multiselect items in brackets and separate them with a comma. 
 Example: `[test1, test2]`.
+- Smartsheet also has some hard limits. You can read them [here](https://developers.smartsheet.com/api/smartsheet/guides/limitations).
 
 ## Actions
 
