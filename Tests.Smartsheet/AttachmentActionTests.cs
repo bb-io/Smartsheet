@@ -44,7 +44,7 @@ public class AttachmentActionTests : TestBaseMultipleConnections
         // Arrange
         var actions = new AttachmentActions(context, FileManager);
         var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
-        var attachmentRequest = new AttachmentIdentifier { AttachmentId = "6724129434013572" };
+        var attachmentRequest = new AttachmentIdentifier { AttachmentId = "4342197144424324" };
 
         // Act
         var result = await actions.GetAttachment(sheetRequest, attachmentRequest);

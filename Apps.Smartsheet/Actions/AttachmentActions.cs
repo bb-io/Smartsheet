@@ -33,13 +33,10 @@ public class AttachmentActions(InvocationContext context, IFileManagementClient 
         if (!string.IsNullOrEmpty(rowIdentifier.RowId) && !string.IsNullOrEmpty(discussionIdentifier.DiscussionId))
             throw new PluginMisconfigurationException("Please specify either a row ID or a discussion ID");
         
-        string endpoint;
-        if (!string.IsNullOrEmpty(rowIdentifier.RowId))
-            endpoint = $"sheets/{sheetIdentifier.SheetId}/rows/{rowIdentifier.RowId}/attachments";
-        else if (!string.IsNullOrEmpty(discussionIdentifier.DiscussionId))
-            endpoint = $"sheets/{sheetIdentifier.SheetId}/discussions/{discussionIdentifier.DiscussionId}/attachments";
-        else
-            endpoint = $"sheets/{sheetIdentifier.SheetId}/attachments";
+        string endpoint = GetAttachmentEndpoint(
+            sheetId: sheetIdentifier.SheetId,
+            rowId: rowIdentifier.RowId,
+            discussionId: discussionIdentifier.DiscussionId);
 
         var request = new SmartsheetRequest(endpoint);
         var result = await Client.PaginateOffset<AttachmentEntity>(request)
@@ -62,13 +59,10 @@ public class AttachmentActions(InvocationContext context, IFileManagementClient 
         if (!string.IsNullOrEmpty(rowIdentifier.RowId) && !string.IsNullOrEmpty(commentIdentifier.CommentId))
             throw new PluginMisconfigurationException("Please specify either a row ID or a comment ID");
 
-        string endpoint;
-        if (!string.IsNullOrEmpty(rowIdentifier.RowId))
-            endpoint = $"sheets/{sheetIdentifier.SheetId}/rows/{rowIdentifier.RowId}/attachments";
-        else if (!string.IsNullOrEmpty(commentIdentifier.CommentId))
-            endpoint = $"sheets/{sheetIdentifier.SheetId}/comments/{commentIdentifier.CommentId}/attachments";
-        else
-            endpoint = $"sheets/{sheetIdentifier.SheetId}/attachments";
+        string endpoint = GetAttachmentEndpoint(
+            sheetId: sheetIdentifier.SheetId,
+            rowId: rowIdentifier.RowId,
+            commentId: commentIdentifier.CommentId);
 
         await using var file = await fileManagementClient.DownloadAsync(uploadInput.File);
         var fileBytes = await file.GetByteData();
@@ -137,5 +131,23 @@ public class AttachmentActions(InvocationContext context, IFileManagementClient 
     {
         var request = new SmartsheetRequest($"sheets/{sheetId}/attachments/{attachmentId}");
         return await Client.ExecuteWithErrorHandling<AttachmentEntity>(request);
+    }
+
+    private static string GetAttachmentEndpoint(
+        string sheetId,
+        string? rowId = null, 
+        string? discussionId = null, 
+        string? commentId = null)
+    {
+        if (!string.IsNullOrEmpty(rowId))
+            return $"sheets/{sheetId}/rows/{rowId}/attachments";
+        
+        if (!string.IsNullOrEmpty(discussionId))
+            return $"sheets/{sheetId}/discussions/{discussionId}/attachments";
+        
+        if (!string.IsNullOrEmpty(commentId))
+            return $"sheets/{sheetId}/comments/{commentId}/attachments";
+
+        return $"sheets/{sheetId}/attachments";
     }
 }
