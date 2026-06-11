@@ -54,11 +54,15 @@ public class SmartsheetEventHandler(InvocationContext context, [WebhookParameter
         var listRequest = new SmartsheetRequest("webhooks");
         var webhooks = await Client.PaginateOffset<WebhookEntity>(listRequest).ToListAsync();
         
-        var targetWebhook = webhooks.FirstOrDefault(x => x.CallbackUrl == payloadUrl);
-        if (targetWebhook != null)
+        var targetWebhooks = webhooks.Where(x => x.CallbackUrl == payloadUrl).ToList();
+        if (targetWebhooks.Count == 0)
+            return;
+
+        var deleteTasks = targetWebhooks.Select(async x =>
         {
-            var deleteRequest = new SmartsheetRequest($"webhooks/{targetWebhook.Id}", Method.Delete);
+            var deleteRequest = new SmartsheetRequest($"webhooks/{x.Id}", Method.Delete);
             await Client.ExecuteWithErrorHandling(deleteRequest);
-        }
+        });
+        await Task.WhenAll(deleteTasks);
     }
 }
