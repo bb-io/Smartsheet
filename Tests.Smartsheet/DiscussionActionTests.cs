@@ -1,20 +1,22 @@
 using Apps.Smartsheet.Actions;
+using Apps.Smartsheet.Constants;
 using Apps.Smartsheet.Models.Identifiers;
 using Apps.Smartsheet.Models.Identifiers.Optional;
 using Apps.Smartsheet.Models.Request.Discussion;
 using Blackbird.Applications.Sdk.Common.Exceptions;
+using Blackbird.Applications.Sdk.Common.Invocation;
 using Tests.Smartsheet.Base;
 
 namespace Tests.Smartsheet;
 
 [TestClass]
-public class DiscussionActionTests : TestBase
+public class DiscussionActionTests : TestBaseMultipleConnections
 {
-    [TestMethod]
-    public async Task SearchDiscussions_ReturnsDiscussions()
+    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    public async Task SearchDiscussions_ReturnsDiscussions(InvocationContext context)
     {
         // Arrange
-        var actions = new DiscussionActions(InvocationContext);
+        var actions = new DiscussionActions(context);
         var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
         var rowRequest = new OptionalRowIdentifier { RowId = "4568057153257348" };
 
@@ -26,11 +28,11 @@ public class DiscussionActionTests : TestBase
         Assert.IsNotNull(result);
     }
 
-    [TestMethod]
-    public async Task GetDiscussion_ReturnsDiscussion()
+    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    public async Task GetDiscussion_ReturnsDiscussion(InvocationContext context)
     {
         // Arrange
-        var actions = new DiscussionActions(InvocationContext);
+        var actions = new DiscussionActions(context);
         var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
         var discussionRequest = new DiscussionIdentifier { DiscussionId = "8273197239144324" };
 
@@ -42,11 +44,11 @@ public class DiscussionActionTests : TestBase
         Assert.IsNotNull(result);
     }
 
-    [TestMethod]
-    public async Task CreateDiscussion_ReturnsCreatedDiscussion()
+    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    public async Task CreateDiscussion_ReturnsCreatedDiscussion(InvocationContext context)
     {
         // Arrange
-        var actions = new DiscussionActions(InvocationContext);
+        var actions = new DiscussionActions(context);
         var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
         var rowRequest = new OptionalRowIdentifier { RowId = "4568057153257348" };
         var createRequest = new CreateDiscussionRequest { DiscussionText = "test from tests2" };
@@ -59,11 +61,11 @@ public class DiscussionActionTests : TestBase
         Assert.IsNotNull(result);
     }
 
-    [TestMethod]
-    public async Task DeleteDiscussion_IsSuccess()
+    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    public async Task DeleteDiscussion_IsSuccess(InvocationContext context)
     {
         // Arrange
-        var actions = new DiscussionActions(InvocationContext);
+        var actions = new DiscussionActions(context);
         var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
         var discussionRequest = new DiscussionIdentifier { DiscussionId = "8273197239144324" };
 

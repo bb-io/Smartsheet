@@ -1,19 +1,21 @@
 using Apps.Smartsheet.Actions;
+using Apps.Smartsheet.Constants;
 using Apps.Smartsheet.Models.Identifiers;
 using Apps.Smartsheet.Models.Request.Column;
 using Blackbird.Applications.Sdk.Common.Exceptions;
+using Blackbird.Applications.Sdk.Common.Invocation;
 using Tests.Smartsheet.Base;
 
 namespace Tests.Smartsheet;
 
 [TestClass]
-public class ColumnActionTests : TestBase
+public class ColumnActionTests : TestBaseMultipleConnections
 {
-    [TestMethod]
-    public async Task SearchColumns_ReturnsColumns()
+    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    public async Task SearchColumns_ReturnsColumns(InvocationContext context)
     {
         // Arrange
-        var actions = new ColumnActions(InvocationContext);
+        var actions = new ColumnActions(context);
         var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
         var searchRequest = new SearchColumnsRequest { ColumnTitleContains = "" };
 
@@ -25,11 +27,11 @@ public class ColumnActionTests : TestBase
         Assert.IsNotNull(result);
     }
     
-    [TestMethod]
-    public async Task GetColumn_ReturnsColumn()
+    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    public async Task GetColumn_ReturnsColumn(InvocationContext context)
     {
         // Arrange
-        var actions = new ColumnActions(InvocationContext);
+        var actions = new ColumnActions(context);
         var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
         var columnRequest = new ColumnIdentifier { ColumnId = "3565725498511236" };
 
@@ -41,11 +43,11 @@ public class ColumnActionTests : TestBase
         Assert.IsNotNull(result);
     }
 
-    [TestMethod]
-    public async Task AddColumn_ReturnsCreatedColumn()
+    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    public async Task AddColumn_ReturnsCreatedColumn(InvocationContext context)
     {
         // Arrange
-        var actions = new ColumnActions(InvocationContext);
+        var actions = new ColumnActions(context);
         var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
         var addRequest = new AddColumnRequest
         {
@@ -64,11 +66,11 @@ public class ColumnActionTests : TestBase
         Assert.IsNotNull(result);
     }
     
-    [TestMethod]
-    public async Task UpdateColumn_ReturnsUpdateColumn()
+    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    public async Task UpdateColumn_ReturnsUpdateColumn(InvocationContext context)
     {
         // Arrange
-        var actions = new ColumnActions(InvocationContext);
+        var actions = new ColumnActions(context);
         var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
         var columnRequest = new ColumnIdentifier { ColumnId = "8064937711931268" };
         var addRequest = new UpdateColumnRequest
@@ -90,11 +92,11 @@ public class ColumnActionTests : TestBase
         Assert.IsNotNull(result);
     }
 
-    [TestMethod]
-    public async Task DeleteColumn_IsSuccess()
+    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    public async Task DeleteColumn_IsSuccess(InvocationContext context)
     {
         // Arrange
-        var actions = new ColumnActions(InvocationContext);
+        var actions = new ColumnActions(context);
         var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
         var columnRequest = new ColumnIdentifier { ColumnId = "8064937711931268" };
 

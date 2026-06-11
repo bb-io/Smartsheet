@@ -1,20 +1,22 @@
 using System.Globalization;
 using Apps.Smartsheet.Actions;
+using Apps.Smartsheet.Constants;
 using Apps.Smartsheet.Models.Identifiers;
 using Apps.Smartsheet.Models.Request.Row;
 using Blackbird.Applications.Sdk.Common.Exceptions;
+using Blackbird.Applications.Sdk.Common.Invocation;
 using Tests.Smartsheet.Base;
 
 namespace Tests.Smartsheet;
 
 [TestClass]
-public class RowActionTests : TestBase
+public class RowActionTests : TestBaseMultipleConnections
 {
-    [TestMethod]
-    public async Task GetRow_ReturnsRow()
+    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    public async Task GetRow_ReturnsRow(InvocationContext context)
     {
         // Arrange
-        var actions = new RowActions(InvocationContext);
+        var actions = new RowActions(context);
         var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
         var rowRequest = new RowIdentifier { RowId = "7026673031511940" };
 
@@ -26,11 +28,11 @@ public class RowActionTests : TestBase
         Assert.IsNotNull(result);
     }
 
-    [TestMethod]
-    public async Task AddRow_ReturnsCreatedRow()
+    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    public async Task AddRow_ReturnsCreatedRow(InvocationContext context)
     {
         // Arrange
-        var actions = new RowActions(InvocationContext);
+        var actions = new RowActions(context);
         var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
         var currentDate = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture);
         var addRequest = new AddRowRequest
@@ -48,11 +50,11 @@ public class RowActionTests : TestBase
         Assert.IsNotNull(result);
     }
 
-    [TestMethod]
-    public async Task UpdateRow_ReturnsUpdatedRow()
+    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    public async Task UpdateRow_ReturnsUpdatedRow(InvocationContext context)
     {
         // Arrange
-        var actions = new RowActions(InvocationContext);
+        var actions = new RowActions(context);
         var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
         var rowRequest = new RowIdentifier { RowId = "7026673031511940" };
         var currentDateString = (DateTime.UtcNow - TimeSpan.FromDays(3)).ToString(CultureInfo.InvariantCulture);
@@ -70,11 +72,11 @@ public class RowActionTests : TestBase
         Assert.IsNotNull(result);
     }
     
-    [TestMethod]
-    public async Task DeleteRow_IsSuccess()
+    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    public async Task DeleteRow_IsSuccess(InvocationContext context)
     {
         // Arrange
-        var actions = new RowActions(InvocationContext);
+        var actions = new RowActions(context);
         var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
         var rowRequest = new RowIdentifier { RowId = "5698729171419012" };
 
@@ -85,6 +87,6 @@ public class RowActionTests : TestBase
         var ex = await Assert.ThrowsExactlyAsync<PluginApplicationException>(async () => 
             await actions.GetRow(sheetRequest, rowRequest));
         
-        Assert.Contains(ex.Message, "Not Found");
+        Assert.Contains("Not Found", ex.Message);
     }
 }

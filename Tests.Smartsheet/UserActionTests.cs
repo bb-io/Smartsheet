@@ -1,17 +1,19 @@
 ﻿using Apps.Smartsheet.Actions;
+using Apps.Smartsheet.Constants;
 using Apps.Smartsheet.Models.Identifiers;
+using Blackbird.Applications.Sdk.Common.Invocation;
 using Tests.Smartsheet.Base;
 
 namespace Tests.Smartsheet;
 
 [TestClass]
-public class UserActionTests : TestBase
+public class UserActionTests : TestBaseMultipleConnections
 {
-    [TestMethod]
-    public async Task SearchUsers_ReturnsUsers()
+    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    public async Task SearchUsers_ReturnsUsers(InvocationContext context)
     {
         // Arrange
-        var actions = new UserActions(InvocationContext);
+        var actions = new UserActions(context);
 
         // Act
         var result = await actions.SearchUsers();
@@ -21,11 +23,11 @@ public class UserActionTests : TestBase
         Assert.IsNotEmpty(result.Users);
     }
 
-    [TestMethod]
-    public async Task GetUser_ReturnsUser()
+    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    public async Task GetUser_ReturnsUser(InvocationContext context)
     {
         // Arrange
-        var actions = new UserActions(InvocationContext);
+        var actions = new UserActions(context);
         var userId = new UserIdentifier { UserId = "4905085051398020" };
 
         // Act

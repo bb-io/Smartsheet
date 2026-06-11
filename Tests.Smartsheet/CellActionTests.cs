@@ -1,18 +1,20 @@
 using Apps.Smartsheet.Actions;
+using Apps.Smartsheet.Constants;
 using Apps.Smartsheet.Models.Identifiers;
 using Apps.Smartsheet.Models.Request.Cell;
+using Blackbird.Applications.Sdk.Common.Invocation;
 using Tests.Smartsheet.Base;
 
 namespace Tests.Smartsheet;
 
 [TestClass]
-public class CellActionTests : TestBase
+public class CellActionTests : TestBaseMultipleConnections
 {
-    [TestMethod]
-    public async Task UpdateCell_ReturnsUpdatedCell()
+    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    public async Task UpdateCell_ReturnsUpdatedCell(InvocationContext context)
     {
         // Arrange
-        var actions = new CellActions(InvocationContext);
+        var actions = new CellActions(context);
         var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
         var rowRequest = new RowIdentifier { RowId = "7026673031511940" };
         var columnRequest = new ColumnIdentifier { ColumnId = "8680904674545540" };
@@ -26,11 +28,11 @@ public class CellActionTests : TestBase
         Assert.IsNotNull(result);
     }
     
-    [TestMethod]
-    public async Task GetCell_ReturnsCell()
+    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    public async Task GetCell_ReturnsCell(InvocationContext context)
     {
         // Arrange
-        var actions = new CellActions(InvocationContext);
+        var actions = new CellActions(context);
         var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
         var rowRequest = new RowIdentifier { RowId = "4568057153257348" };
         var columnRequest = new ColumnIdentifier { ColumnId = "750975731404676" };

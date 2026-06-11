@@ -1,18 +1,20 @@
 using Apps.Smartsheet.Actions;
+using Apps.Smartsheet.Constants;
 using Apps.Smartsheet.Models.Identifiers;
 using Apps.Smartsheet.Models.Request.Contacts;
+using Blackbird.Applications.Sdk.Common.Invocation;
 using Tests.Smartsheet.Base;
 
 namespace Tests.Smartsheet;
 
 [TestClass]
-public class ContactActionTests : TestBase
+public class ContactActionTests : TestBaseMultipleConnections
 {
-    [TestMethod]
-    public async Task SearchContacts_ReturnsContacts()
+    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    public async Task SearchContacts_ReturnsContacts(InvocationContext context)
     {
         // Arrange
-        var actions = new ContactActions(InvocationContext);
+        var actions = new ContactActions(context);
         var request = new SearchContactsRequest
         {
             EmailContains = "email.com"
@@ -26,11 +28,11 @@ public class ContactActionTests : TestBase
         Assert.IsNotNull(result);
     }
 
-    [TestMethod]
-    public async Task GetContact_ReturnsContact()
+    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    public async Task GetContact_ReturnsContact(InvocationContext context)
     {
         // Arrange
-        var actions = new ContactActions(InvocationContext);
+        var actions = new ContactActions(context);
         var contactRequest = new ContactIdentifier { ContactId = "AAAAATYU54QAGI2L7BTnhA" };
 
         // Act

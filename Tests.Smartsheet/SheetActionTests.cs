@@ -4,18 +4,19 @@ using Apps.Smartsheet.Models.Identifiers;
 using Apps.Smartsheet.Models.Identifiers.Optional;
 using Apps.Smartsheet.Models.Request.Sheet;
 using Blackbird.Applications.Sdk.Common.Files;
+using Blackbird.Applications.Sdk.Common.Invocation;
 using Tests.Smartsheet.Base;
 
 namespace Tests.Smartsheet;
 
 [TestClass]
-public class SheetActionTests : TestBase
+public class SheetActionTests : TestBaseMultipleConnections
 {
-    [TestMethod]
-    public async Task SearchSheets_ReturnsSheets()
+    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    public async Task SearchSheets_ReturnsSheets(InvocationContext context)
     {
         // Arrange
-        var actions = new SheetActions(InvocationContext, FileManager);
+        var actions = new SheetActions(context, FileManager);
         var searchInput = new SearchSheetsRequest
         {
             
@@ -29,11 +30,11 @@ public class SheetActionTests : TestBase
         Assert.IsNotNull(result);
     }
 
-    [TestMethod]
-    public async Task GetSheet_ReturnsSheet()
+    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    public async Task GetSheet_ReturnsSheet(InvocationContext context)
     {
         // Arrange
-        var actions = new SheetActions(InvocationContext, FileManager);
+        var actions = new SheetActions(context, FileManager);
         var sheetRequest = new SheetIdentifier
         {
             SheetId = "4709706974056324",
@@ -48,11 +49,11 @@ public class SheetActionTests : TestBase
         Assert.IsNotNull(result);
     }
 
-    [TestMethod]
-    public async Task CreateSheetInWorkspace_ReturnsCreatedSheet()
+    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    public async Task CreateSheetInWorkspace_ReturnsCreatedSheet(InvocationContext context)
     {
         // Arrange
-        var actions = new SheetActions(InvocationContext, FileManager);
+        var actions = new SheetActions(context, FileManager);
         var workspaceRequest = new WorkspaceIdentifier { WorkspaceId = "3461696967731076" };
         var createRequest = new CreateSheetRequest { Name = "test from tests4" };
         var folderRequest = new OptionalFolderIdentifier { FolderId = "3836504997947268" };
@@ -65,11 +66,11 @@ public class SheetActionTests : TestBase
         Assert.IsNotNull(result);
     }
 
-    [TestMethod]
-    public async Task UpdateSheet_ReturnsUpdatedSheet()
+    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    public async Task UpdateSheet_ReturnsUpdatedSheet(InvocationContext context)
     {
         // Arrange
-        var actions = new SheetActions(InvocationContext, FileManager);
+        var actions = new SheetActions(context, FileManager);
         var sheetRequest = new SheetIdentifier
         {
             SheetId = "133455458291588",
@@ -85,11 +86,11 @@ public class SheetActionTests : TestBase
         Assert.IsNotNull(result);
     }
 
-    [TestMethod]
-    public async Task SearchWithinAllSheets_ReturnsSearchResults()
+    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    public async Task SearchWithinAllSheets_ReturnsSearchResults(InvocationContext context)
     {
         // Arrange
-        var actions = new SheetActions(InvocationContext, FileManager);
+        var actions = new SheetActions(context, FileManager);
         var searchRequest = new SearchWithinSheetsRequest
         {
             TextToSearch = "value"
@@ -103,11 +104,11 @@ public class SheetActionTests : TestBase
         Assert.IsNotNull(result);
     }
     
-    [TestMethod]
-    public async Task SearchWithinSheet_ReturnsSearchResults()
+    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    public async Task SearchWithinSheet_ReturnsSearchResults(InvocationContext context)
     {
         // Arrange
-        var actions = new SheetActions(InvocationContext, FileManager);
+        var actions = new SheetActions(context, FileManager);
         var sheetRequest = new SheetIdentifier
         {
             SheetId = "3188607262084996",
@@ -126,11 +127,11 @@ public class SheetActionTests : TestBase
         Assert.IsNotNull(result);
     }
 
-    [TestMethod]
-    public async Task DownloadSheet_IsSuccess()
+    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    public async Task DownloadSheet_IsSuccess(InvocationContext context)
     {
         // Arrange
-        var actions = new SheetActions(InvocationContext, FileManager);
+        var actions = new SheetActions(context, FileManager);
         var sheetRequest = new SheetIdentifier
         {
             SheetId = "3188607262084996",
@@ -143,15 +144,15 @@ public class SheetActionTests : TestBase
         var result = await actions.DownloadSheet(sheetRequest, fileFormatRequest, downloadRequest);
 
         // Assert
-        Console.WriteLine(result.File.Name);
+        TestContext?.WriteLine(result.File.Name);
         Assert.IsNotNull(result.File);
     }
 
-    [TestMethod]
-    public async Task UploadSheet_ReturnsUploadedSheet()
+    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    public async Task UploadSheet_ReturnsUploadedSheet(InvocationContext context)
     {
         // Arrange
-        var actions = new SheetActions(InvocationContext, FileManager);
+        var actions = new SheetActions(context, FileManager);
         var workspaceRequest = new WorkspaceIdentifier { WorkspaceId = "3461696967731076" };
         var folderRequest = new OptionalFolderIdentifier { FolderId = "8172027522639748" };
         var uploadRequest = new UploadSheetRequest
