@@ -1,0 +1,15 @@
+{
+  "ConnectionDefinition": [
+    {
+      "ConnectionType": "API Key",
+      "ApiKey": "",
+      "BaseUrl": "https://api.smartsheet.com/"
+    },
+    {
+      "ConnectionType": "OAuth",
+      "AccessToken": "Bearer ...",
+      "BaseUrl": "https://api.smartsheet.com/"
+    }
+  ],
+  "TestFolder": "TestFiles"
+}
