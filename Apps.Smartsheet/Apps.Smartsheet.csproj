@@ -6,7 +6,7 @@
         <Nullable>enable</Nullable>
         <Product>Smartsheet [Beta]</Product>
         <Description>Smartsheet is a software as a service (SaaS) offering for collaboration and work management, developed and marketed by Smartsheet Inc.</Description>
-        <Version>1.0.0</Version>
+        <Version>1.0.1</Version>
         <AssemblyName>Apps.Smartsheet</AssemblyName>
     </PropertyGroup>
 
@@ -19,6 +19,12 @@
 
     <ItemGroup>
         <EmbeddedResource CopyToOutputDirectory="Always" Include="image\icon.png" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="..\README.md">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </EmbeddedResource>
     </ItemGroup>
 
 </Project>
