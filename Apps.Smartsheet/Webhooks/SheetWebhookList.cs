@@ -3,12 +3,12 @@ using Apps.Smartsheet.Helper.Webhook;
 using Apps.Smartsheet.Models.Entities.Sheet;
 using Apps.Smartsheet.Models.Identifiers;
 using Apps.Smartsheet.Models.Identifiers.Optional;
-using Apps.Smartsheet.Models.Response.Row;
 using Apps.Smartsheet.Models.Response.Sheet;
 using Apps.Smartsheet.Webhooks.Handlers;
 using Apps.Smartsheet.Webhooks.Models.Response.Cell;
 using Blackbird.Applications.Sdk.Common.Invocation;
 using Blackbird.Applications.Sdk.Common.Webhooks;
+using RestSharp;
 
 namespace Apps.Smartsheet.Webhooks;
 
@@ -57,14 +57,40 @@ public class SheetWebhookList(InvocationContext context) : SmartsheetInvocable(c
             .Distinct()
             .ToList();
 
-        var getRequest = new SmartsheetRequest($"sheets/{sheetIdentifier.SheetId}?rowIds={string.Join(",", rowIds)}");
+        var columnIds = changes
+            .Where(c => !string.IsNullOrEmpty(c.ColumnId))
+            .Select(c => c.ColumnId!)
+            .Distinct()
+            .ToList();
+
+        var getRequest = new SmartsheetRequest($"sheets/{sheetIdentifier.SheetId}")
+            .AddQueryParameter("rowIds", string.Join(",", rowIds))
+            .AddQueryParameter("columnIds", string.Join(",", columnIds));
         var sheetEntity = await Client.ExecuteWithErrorHandling<SheetEntity>(getRequest);
-        
-        var changedRows = sheetEntity.Rows.Select(r => new RowResponse(r)).ToList();
+
+        var changedCells = changes
+            .Select(change =>
+            {
+                var row = sheetEntity.Rows.FirstOrDefault(r => r.Id == change.RowId);
+                var cell = row?.Cells.FirstOrDefault(c => c.ColumnId == change.ColumnId);
+                return (row, cell);
+            })
+            .Where(x => x.row is not null && x.cell is not null)
+            .Select(x => new ChangedCellResponse
+            {
+                RowId = x.row!.Id,
+                RowNumber = x.row.RowNumber,
+                ColumnId = x.cell!.ColumnId,
+                Type = x.cell.ColumnType,
+                Value = x.cell.Value,
+                DisplayValue = x.cell.DisplayValue
+            })
+            .ToList();
+
         return new WebhookResponse<CellUpdatedResponse>
         {
             HttpResponseMessage = processed.Response,
-            Result = new CellUpdatedResponse(changedRows)
+            Result = new CellUpdatedResponse(changedCells)
         };
     }
 }

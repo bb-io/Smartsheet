@@ -8,7 +8,7 @@ namespace Apps.Smartsheet.Webhooks.Handlers;
 public class SmartsheetSheetEventHandler(
     InvocationContext context,
     [WebhookParameter(true)] SheetIdentifier sheetIdentifier,
-    [WebhookParameter] OptionalColumnIdentifier? columnIdentifier = null)
+    [WebhookParameter] OptionalColumnIdentifier? columnIdentifier)
     : SmartsheetBaseEventHandler(context, sheetIdentifier)
 {
     protected override string WebhookName => HasColumn
