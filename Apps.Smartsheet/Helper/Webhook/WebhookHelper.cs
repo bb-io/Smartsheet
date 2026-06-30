@@ -23,14 +23,14 @@ public static class WebhookHelper
         return new(new HttpResponseMessage(HttpStatusCode.OK), matchingEventIds);
     }
 
-    public static ProcessedCellEvent ProcessCellEvents(WebhookRequest request, string targetEventType)
+    public static ProcessedCellEvent ProcessCellEvents(WebhookRequest request, params string[] targetEventType)
     {
         var payload = Deserialize(request);
         if (TryHandshake(payload, out var handshake))
             return new(handshake!, null);
 
         var changes = payload?.Events
-            .Where(e => e.ObjectType == "cell" && e.EventType == targetEventType)
+            .Where(e => e.ObjectType == "cell" && targetEventType.Contains(e.EventType))
             .Select(e => new CellChange(e.ColumnId, e.RowId))
             .ToList() ?? [];
 

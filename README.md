@@ -160,6 +160,7 @@ Example: `[test1, test2]`.
 
 - **On sheets created**. Triggers when new sheets are created.
 - **On sheet updated**. Triggers when a specific sheet is updated.
+- **On cells updated**. Triggers when cells are created or updated.
 
 ## Feedback
 

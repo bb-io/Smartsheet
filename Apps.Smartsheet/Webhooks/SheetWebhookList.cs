@@ -34,13 +34,13 @@ public class SheetWebhookList(InvocationContext context) : SmartsheetInvocable(c
         };
     }
 
-    [Webhook("On cell updated", typeof(SmartsheetSheetEventHandler), Description = "Triggers when a cell is updated")]
+    [Webhook("On cells updated", typeof(SmartsheetSheetEventHandler), Description = "Triggers when cells are created or updated")]
     public async Task<WebhookResponse<CellUpdatedResponse>> OnCellUpdated(
         WebhookRequest request,
         [WebhookParameter(true)] SheetIdentifier sheetIdentifier,
         [WebhookParameter] OptionalRowIdentifier? rowIdentifier)
     {
-        var processed = WebhookHelper.ProcessCellEvents(request, "updated");
+        var processed = WebhookHelper.ProcessCellEvents(request, "updated", "created");
         if (processed.ShouldPreflight)
             return WebhookHelper.Preflight<CellUpdatedResponse>(processed.Response);
 
@@ -87,6 +87,9 @@ public class SheetWebhookList(InvocationContext context) : SmartsheetInvocable(c
                 DisplayValue = x.cell.DisplayValue
             })
             .ToList();
+        
+        if (changedCells.Count == 0)
+            return WebhookHelper.Preflight<CellUpdatedResponse>(processed.Response);
 
         return new WebhookResponse<CellUpdatedResponse>
         {
