@@ -12,7 +12,7 @@ namespace Apps.Smartsheet.Webhooks;
 [WebhookList("Sheets")]
 public class SheetWebhookList(InvocationContext context) : SmartsheetInvocable(context)
 {
-    [Webhook("On sheet updated", typeof(SmartsheetEventHandler), Description = "Triggers when a specific sheet is updated")]
+    [Webhook("On sheet updated", typeof(SmartsheetSheetEventHandler), Description = "Triggers when a specific sheet is updated")]
     public async Task<WebhookResponse<SheetResponse>> OnSheetUpdated(
         WebhookRequest request,
         [WebhookParameter(true)] SheetIdentifier sheetIdentifier)
