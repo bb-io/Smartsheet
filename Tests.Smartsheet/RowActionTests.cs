@@ -12,6 +12,21 @@ namespace Tests.Smartsheet;
 [TestClass]
 public class RowActionTests : TestBaseMultipleConnections
 {
+    [TestMethod, TargetConnections(ConnectionTypes.ApiKey)]
+    public async Task SearchRows_ReturnsRows(InvocationContext context)
+    {
+        // Arrange
+        var actions = new RowActions(context);
+        var sheetRequest = new SheetIdentifier { SheetId = "3188607262084996" };
+
+        // Act
+        var result = await actions.SearchRows(sheetRequest);
+
+        // Assert
+        PrintJsonResult(result);
+        Assert.IsNotNull(result);
+    }
+    
     [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
     public async Task GetRow_ReturnsRow(InvocationContext context)
     {

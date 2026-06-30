@@ -117,6 +117,7 @@ Example: `[test1, test2]`.
 
 ### Rows
 
+- **Search rows**. Search rows for a specific sheet.
 - **Get row**. Get row values.
 - **Add row**. Insert a new row into a specific sheet.
 - **Update row**. Update values of an existing row.
