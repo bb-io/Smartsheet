@@ -65,7 +65,8 @@ public class SheetWebhookList(InvocationContext context) : SmartsheetInvocable(c
 
         var getRequest = new SmartsheetRequest($"sheets/{sheetIdentifier.SheetId}")
             .AddQueryParameter("rowIds", string.Join(",", rowIds))
-            .AddQueryParameter("columnIds", string.Join(",", columnIds));
+            .AddQueryParameter("columnIds", string.Join(",", columnIds))
+            .AddQueryParameter("include", "columnType");
         var sheetEntity = await Client.ExecuteWithErrorHandling<SheetEntity>(getRequest);
 
         var changedCells = changes
