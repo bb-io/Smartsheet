@@ -8,9 +8,9 @@ namespace Apps.Smartsheet.Models.Identifiers;
 
 public class SheetIdentifier
 {
+    [Display("Workspace ID"), DataSource(typeof(WorkspaceDataHandler))]
+    public string WorkspaceId { get; set; } = string.Empty;
+    
     [Display("Sheet ID"), FileDataSource(typeof(SheetPickerDataHandler))]
     public string SheetId { get; set; } = string.Empty;
-
-    [Display("Workspace ID"), DataSource(typeof(WorkspaceDataHandler))]
-    public string? WorkspaceId { get; set; }
 }
