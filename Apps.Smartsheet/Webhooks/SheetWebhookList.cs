@@ -55,13 +55,15 @@ public class SheetWebhookList(InvocationContext context) : SmartsheetInvocable(c
             .Where(c => !string.IsNullOrEmpty(c.RowId))
             .Select(c => c.RowId!)
             .Distinct()
-            .ToList();
+            .ToArray();
+        if (rowIds.Length == 0)
+            return WebhookHelper.Preflight<CellUpdatedResponse>(processed.Response);
 
         var columnIds = changes
             .Where(c => !string.IsNullOrEmpty(c.ColumnId))
             .Select(c => c.ColumnId!)
             .Distinct()
-            .ToList();
+            .ToArray();
 
         var getRequest = new SmartsheetRequest($"sheets/{sheetIdentifier.SheetId}")
             .AddQueryParameter("rowIds", string.Join(",", rowIds))
