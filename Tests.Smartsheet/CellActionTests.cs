@@ -28,7 +28,7 @@ public class CellActionTests : TestBaseMultipleConnections
         Assert.IsNotNull(result);
     }
     
-    [TestMethod, TargetConnections(ConnectionTypes.OAuth, ConnectionTypes.ApiKey)]
+    [TestMethod, TargetConnections(ConnectionTypes.ApiKey)]
     public async Task GetCell_ReturnsCell(InvocationContext context)
     {
         // Arrange

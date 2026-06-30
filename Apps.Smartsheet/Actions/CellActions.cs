@@ -55,7 +55,7 @@ public class CellActions(InvocationContext context) : SmartsheetInvocable(contex
     private async Task<CellEntity> FetchCell(string sheetId, string rowId, string columnId)
     {
         var request = new SmartsheetRequest($"sheets/{sheetId}/rows/{rowId}")
-            .AddQueryParameter("include", "columns");
+            .AddQueryParameter("include", "columns,columnType");
         var response = await Client.ExecuteWithErrorHandling<RowEntity>(request);
         
         var cell = response.Cells.First(x => x.ColumnId == columnId);

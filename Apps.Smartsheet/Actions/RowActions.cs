@@ -23,7 +23,8 @@ public class RowActions(InvocationContext context) : SmartsheetInvocable(context
     [Action("Search rows", Description = "Search rows for a specific sheet")]
     public async Task<SearchRowsResponse> SearchRows([ActionParameter] SheetIdentifier sheetIdentifier)
     {
-        var sheetRequest = new SmartsheetRequest($"sheets/{sheetIdentifier.SheetId}");
+        var sheetRequest = new SmartsheetRequest($"sheets/{sheetIdentifier.SheetId}")
+            .AddQueryParameter("include", "columnType");
         var sheetResponse = await Client.ExecuteWithErrorHandling<SheetEntity>(sheetRequest);
 
         var sheetRows = sheetResponse.Rows.Select(x => new RowResponse(x));
