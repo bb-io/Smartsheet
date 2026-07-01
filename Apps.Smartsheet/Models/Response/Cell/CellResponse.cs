@@ -9,6 +9,7 @@ public record CellResponse
     {
         ColumnId = cell.ColumnId;
         Value = cell.Value;
+        Type = cell.ColumnType;
         DisplayValue = cell.DisplayValue;
         Formula = cell.Formula;
     }
@@ -18,6 +19,9 @@ public record CellResponse
 
     [Display("Column value")]
     public string? Value { get; set; }
+
+    [Display("Column type")]
+    public string Type { get; set; }
 
     [Display("Column display value")]
     public string? DisplayValue { get; set; }

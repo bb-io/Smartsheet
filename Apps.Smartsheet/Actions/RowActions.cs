@@ -2,6 +2,7 @@ using Apps.Smartsheet.Api.Requests;
 using Apps.Smartsheet.Helper.Error;
 using Apps.Smartsheet.Helper.Payload;
 using Apps.Smartsheet.Models.Entities.Row;
+using Apps.Smartsheet.Models.Entities.Sheet;
 using Apps.Smartsheet.Models.Identifiers;
 using Apps.Smartsheet.Models.Request.Row;
 using Apps.Smartsheet.Models.Response.Row;
@@ -18,6 +19,18 @@ namespace Apps.Smartsheet.Actions;
 [ActionList("Rows")]
 public class RowActions(InvocationContext context) : SmartsheetInvocable(context)
 {
+    // https://developers.smartsheet.com/api/smartsheet/openapi/sheets/getsheet
+    [Action("Search rows", Description = "Search rows for a specific sheet")]
+    public async Task<SearchRowsResponse> SearchRows([ActionParameter] SheetIdentifier sheetIdentifier)
+    {
+        var sheetRequest = new SmartsheetRequest($"sheets/{sheetIdentifier.SheetId}")
+            .AddQueryParameter("include", "columnType");
+        var sheetResponse = await Client.ExecuteWithErrorHandling<SheetEntity>(sheetRequest);
+
+        var sheetRows = sheetResponse.Rows.Select(x => new RowResponse(x));
+        return new(sheetRows.ToArray());
+    }
+    
     // https://developers.smartsheet.com/api/smartsheet/openapi/rows/row-get
     [Action("Get row", Description = "Get row values")]
     public async Task<RowResponse> GetRow(

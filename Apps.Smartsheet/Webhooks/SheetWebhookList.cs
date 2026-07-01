@@ -2,10 +2,13 @@ using Apps.Smartsheet.Api.Requests;
 using Apps.Smartsheet.Helper.Webhook;
 using Apps.Smartsheet.Models.Entities.Sheet;
 using Apps.Smartsheet.Models.Identifiers;
+using Apps.Smartsheet.Models.Identifiers.Optional;
 using Apps.Smartsheet.Models.Response.Sheet;
 using Apps.Smartsheet.Webhooks.Handlers;
+using Apps.Smartsheet.Webhooks.Models.Response.Cell;
 using Blackbird.Applications.Sdk.Common.Invocation;
 using Blackbird.Applications.Sdk.Common.Webhooks;
+using RestSharp;
 
 namespace Apps.Smartsheet.Webhooks;
 
@@ -28,6 +31,72 @@ public class SheetWebhookList(InvocationContext context) : SmartsheetInvocable(c
         {
             HttpResponseMessage = processedEvent.Response,
             Result = new SheetResponse(sheetEntity)
+        };
+    }
+
+    [Webhook("On cells updated", typeof(SmartsheetSheetEventHandler), Description = "Triggers when cells are created or updated")]
+    public async Task<WebhookResponse<CellUpdatedResponse>> OnCellUpdated(
+        WebhookRequest request,
+        [WebhookParameter(true)] SheetIdentifier sheetIdentifier,
+        [WebhookParameter] OptionalRowIdentifier? rowIdentifier)
+    {
+        var processed = WebhookHelper.ProcessCellEvents(request, "updated", "created");
+        if (processed.ShouldPreflight)
+            return WebhookHelper.Preflight<CellUpdatedResponse>(processed.Response);
+
+        var changes = processed.Changes!;
+        if (!string.IsNullOrWhiteSpace(rowIdentifier?.RowId))
+            changes = changes.Where(c => c.RowId == rowIdentifier.RowId).ToList();
+
+        if (changes.Count == 0)
+            return WebhookHelper.Preflight<CellUpdatedResponse>(processed.Response);
+
+        var rowIds = changes
+            .Where(c => !string.IsNullOrEmpty(c.RowId))
+            .Select(c => c.RowId!)
+            .Distinct()
+            .ToArray();
+        if (rowIds.Length == 0)
+            return WebhookHelper.Preflight<CellUpdatedResponse>(processed.Response);
+
+        var columnIds = changes
+            .Where(c => !string.IsNullOrEmpty(c.ColumnId))
+            .Select(c => c.ColumnId!)
+            .Distinct()
+            .ToArray();
+
+        var getRequest = new SmartsheetRequest($"sheets/{sheetIdentifier.SheetId}")
+            .AddQueryParameter("rowIds", string.Join(",", rowIds))
+            .AddQueryParameter("columnIds", string.Join(",", columnIds))
+            .AddQueryParameter("include", "columnType");
+        var sheetEntity = await Client.ExecuteWithErrorHandling<SheetEntity>(getRequest);
+
+        var changedCells = changes
+            .Select(change =>
+            {
+                var row = sheetEntity.Rows.FirstOrDefault(r => r.Id == change.RowId);
+                var cell = row?.Cells.FirstOrDefault(c => c.ColumnId == change.ColumnId);
+                return (row, cell);
+            })
+            .Where(x => x.row is not null && x.cell is not null)
+            .Select(x => new ChangedCellResponse
+            {
+                RowId = x.row!.Id,
+                RowNumber = x.row.RowNumber,
+                ColumnId = x.cell!.ColumnId,
+                Type = x.cell.ColumnType,
+                Value = x.cell.Value,
+                DisplayValue = x.cell.DisplayValue
+            })
+            .ToList();
+        
+        if (changedCells.Count == 0)
+            return WebhookHelper.Preflight<CellUpdatedResponse>(processed.Response);
+
+        return new WebhookResponse<CellUpdatedResponse>
+        {
+            HttpResponseMessage = processed.Response,
+            Result = new CellUpdatedResponse(changedCells)
         };
     }
 }

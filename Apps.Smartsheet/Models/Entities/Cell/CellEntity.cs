@@ -7,6 +7,9 @@ public class CellEntity
     [JsonProperty("columnId")] 
     public string ColumnId { get; set; } = string.Empty;
 
+    [JsonProperty("columnType")]
+    public string ColumnType { get; set; } = string.Empty;
+
     [JsonProperty("value")]
     public string? Value { get; set; }
 
